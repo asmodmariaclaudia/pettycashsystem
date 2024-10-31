@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Add Custodian</title>
+    <link rel="stylesheet" href="css/addCusto.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body> 
+    <div class="sidebar">
+        <ul class="menu">
+            <li>
+                <a href="dashboardAdmin">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="adminViewTransaction">
+                     <i class="fas fa-file"></i>
+                     <span>View Transaction</span>
+                </a> 
+             </li>
+             <li>
+                <a href="addCustodian">
+                     <i class="fas fa-user-plus"></i>
+                     <span>Add Custodian</span>
+                </a> 
+             </li>
+             <li>
+                <a href="updateCashF">
+                     <i class="fas fa-money-bill-wave"></i>
+                     <span>Update Fund</span>
+                </a> 
+             </li>
+             <li class="logout">
+                <a href="logout">
+                     <i class="fas fa-sign-out-alt"></i>
+                     <span>Logout</span>
+                </a> 
+             </li>
+        </ul>
+    </div>
+
+     <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="title">
+                <span>Petty Cash System</span>
+            </div>
+            <div class="admin">
+                <span>Admin</span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <!-- <h2>Add Custodian</h2> -->
+            <form action="/add-custodian" method="post">
+                <div class="form-group">
+                    <label for="custodianID">Custodian No:</label>
+                    <input type="text" id="custodianID" name="custodiannum_data" placeholder="Enter custodian number" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="custodianName">Custodian Name:</label>
+                    <input type="text" id="custodianName" name="custodianname_data" placeholder="Enter custodian name" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="usernameCustodian_data" placeholder="Enter username" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="passwordCustodian_data" placeholder="Enter password" required>
+                </div>
+    
+                <button type="submit" class="submit-btn">Create Custodian</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let toggle = document.querySelector('.toggle');
+        let sidebar = document.querySelector('.sidebar');
+        let main = document.querySelector('.main');
+
+        if (localStorage.getItem('sidebarActive') === 'true') {
+            sidebar.classList.add('active');
+            main.classList.add('active');
+        }
+
+        toggle.onclick = function () {
+            sidebar.classList.toggle('active');
+            main.classList.toggle('active');
+
+            localStorage.setItem('sidebarActive', sidebar.classList.contains('active'));
+        };
+
+    const currentLocation = window.location.pathname;
+    const menuItems = document.querySelectorAll('.sidebar .menu li a');
+
+    menuItems.forEach(item => {
+        if (item.getAttribute('href') === currentLocation.split('/').pop()) {
+            item.parentElement.classList.add('active'); 
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin View Transaction</title>
+    <link rel="stylesheet" href="viewtransaction.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body> 
+    <div class="sidebar">
+        <ul class="menu">
+            <li>
+                <a href="dashboard.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="view-transaction.html">
+                     <i class="fas fa-file"></i>
+                     <span>View Transaction</span>
+                </a> 
+             </li>
+             <li>
+                <a href="add-custodian.html">
+                     <i class="fas fa-user-plus"></i>
+                     <span>Add Custodian</span>
+                </a> 
+             </li>
+             <li>
+                <a href="updateCashF">
+                     <i class="fas fa-money-bill-wave"></i>
+                     <span>Update Fund</span>
+                </a> 
+             </li>
+             <li class="logout">
+                <a href="logout.html">
+                     <i class="fas fa-sign-out-alt"></i>
+                     <span>Logout</span>
+                </a> 
+             </li>
+        </ul>
+    </div>
+
+     <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="title">
+                <span>Petty Cash System</span>
+            </div>
+            <div class="admin">
+                <span>Admin</span>
+            </div>
+        </div>
+
+    <div class="dashboard-container">
+        <div class="topdash">
+            <!-- <h2>Transaction</h2> -->
+            <div class="searchbar">
+                <input type="search" placeholder="Search here...">
+                <i class="fa fa-search"></i>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="custodian-table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Date</th>
+                        <th>OR No.</th>
+                        <th>Description</th>
+                        <th>Total</th>
+                        <th>Purchaser</th>
+                        <th>Employee ID</th>
+                        <th>Store Name</th>
+                        <th>Custodian</th>
+                        <th>Refund</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TX-001</td>
+                        <td>2024-10-25</td>
+                        <td>OR-1001</td>
+                        <td>Office Supplies</td>
+                        <td>$150.00</td>
+                        <td>Jane Doe</td>
+                        <td>EMP-123</td>
+                        <td>Stationery Mart</td>
+                        <td>John Smith</td>
+                        <td>$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>TX-002</td>
+                        <td>2024-10-26</td>
+                        <td>OR-1002</td>
+                        <td>Travel Expenses</td>
+                        <td>$250.00</td>
+                        <td>Mark Johnson</td>
+                        <td>EMP-456</td>
+                        <td>Travel Solutions</td>
+                        <td>Emily White</td>
+                        <td>$50.00</td>
+                    </tr>
+                    <tr>
+                        <td>TX-003</td>
+                        <td>2024-10-27</td>
+                        <td>OR-1003</td>
+                        <td>Equipment Repair</td>
+                        <td>$300.00</td>
+                        <td>Alice Brown</td>
+                        <td>EMP-789</td>
+                        <td>Tech Repairs Co.</td>
+                        <td>Michael Green</td>
+                        <td>$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>TX-004</td>
+                        <td>2024-10-28</td>
+                        <td>OR-1004</td>
+                        <td>Client Meeting</td>
+                        <td>$100.00</td>
+                        <td>Lisa Ray</td>
+                        <td>EMP-012</td>
+                        <td>Cafe 24/7</td>
+                        <td>Sarah Black</td>
+                        <td>$10.00</td>
+                    </tr>
+                    <tr>
+                        <td>TX-001</td>
+                        <td>2024-10-25</td>
+                        <td>OR-1001</td>
+                        <td>Office Supplies</td>
+                        <td>$150.00</td>
+                        <td>Jane Doe</td>
+                        <td>EMP-123</td>
+                        <td>Stationery Mart</td>
+                        <td>John Smith</td>
+                        <td>$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>TX-002</td>
+                        <td>2024-10-26</td>
+                        <td>OR-1002</td>
+                        <td>Travel Expenses</td>
+                        <td>$250.00</td>
+                        <td>Mark Johnson</td>
+                        <td>EMP-456</td>
+                        <td>Travel Solutions</td>
+                        <td>Emily White</td>
+                        <td>$50.00</td>
+                    </tr>
+                    <tr>
+                        <td>TX-003</td>
+                        <td>2024-10-27</td>
+                        <td>OR-1003</td>
+                        <td>Equipment Repair</td>
+                        <td>$300.00</td>
+                        <td>Alice Brown</td>
+                        <td>EMP-789</td>
+                        <td>Tech Repairs Co.</td>
+                        <td>Michael Green</td>
+                        <td>$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>TX-004</td>
+                        <td>2024-10-28</td>
+                        <td>OR-1004</td>
+                        <td>Client Meeting</td>
+                        <td>$100.00</td>
+                        <td>Lisa Ray</td>
+                        <td>EMP-012</td>
+                        <td>Cafe 24/7</td>
+                        <td>Sarah Black</td>
+                        <td>$10.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>        
+    </div>
+
+    <script>
+        let toggle = document.querySelector('.toggle');
+        let sidebar = document.querySelector('.sidebar');
+        let main = document.querySelector('.main');
+
+        if (localStorage.getItem('sidebarActive') === 'true') {
+            sidebar.classList.add('active');
+            main.classList.add('active');
+        }
+
+        toggle.onclick = function () {
+            sidebar.classList.toggle('active');
+            main.classList.toggle('active');
+
+            localStorage.setItem('sidebarActive', sidebar.classList.contains('active'));
+        };
+
+
+        const currentLocation = window.location.pathname;
+        const menuItems = document.querySelectorAll('.sidebar .menu li a');
+
+        menuItems.forEach(item => {
+            if (item.getAttribute('href') === currentLocation.split('/').pop()) {
+                item.parentElement.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+body {
+    display: flex;
+    background-color: #eff0f0;
+}
+.sidebar {
+    position: fixed;
+    top: 85px;
+    left: 0;
+    bottom: 0;
+    width: 70px;
+    height: 100vh;
+    padding: 0 0.5rem;
+    color: #fff;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    background: transparent;
+    outline: 2px solid  #298a2e; 
+}
+.sidebar.active {
+    width: 260px;
+    color: #fff;
+    padding: 0 1rem;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    background: #ffffff;
+}
+.sidebar.active .menu li:hover, 
+.active {
+    background: #eff0f0;
+}
+
+.menu {
+    height: 88%;
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    padding: 1rem;
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+}
+
+.menu li:hover, 
+.active {
+    background: white;
+}
+
+.menu a:hover {
+    color: #009933;
+}
+
+.menu a {
+    color: #298a2e;
+    font-size: 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.menu a span {
+    overflow: hidden;
+}
+
+.menu a i {
+    font-size: 1.3rem;
+}
+
+.logout {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    width: 100%;
+
+}
+
+.main {
+    position: absolute;
+    width: calc(100% - 70px);
+    left: 70px;
+    min-height: 100vh;
+    background: var(--white);
+    transition: width 0.5s, left 0.5s;
+}
+
+.main.active {
+    width: calc(100% - 260px);
+    left: 260px;
+}
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 85px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    background: linear-gradient(to right, #1f6e23, #298a2e, #009933, #298a2e, #1f6e23);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.toggle, .title, .admin {
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    flex: 1;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.admin {
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.toggle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.dashboard-container {
+    padding: 20px;
+    margin: 20px;
+    background-color: white; 
+    border-radius: 10px;
+}
+
+.search {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search label {
+    width: 400px;
+    position: relative;
+}
+
+.search input {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    padding: 5px 20px;
+    padding-left: 45px;
+    font-size: 16px;
+    outline: none;
+    border: 1px solid #ccc;
+    background-color: #fff; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search input::placeholder {
+    color: #aaa;
+    opacity: 1;
+}
+
+.search input:focus {
+    border-color: #298a2e;
+    box-shadow: 0 0 5px rgba(41, 138, 46, 0.5);
+}
+
+.search label ion-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: #298a2e;
+}
+.user {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+.user img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dashboard-container {
+    padding: 20px;
+    margin-top: 100px;
+}
+
+.dashboard-header h2 {
+    display: flex;
+    margin: 0;
+    font-size: 16px;
+    color: #298a2e;
+}
+
+.dashboard-header form {
+    display: flex;
+    align-items: center;
+}
+
+.topdash {
+    display: flex;
+    padding: 20px;
+    justify-content: center;
+}
+.topdash h2 {
+    padding-right: 80px;
+    color: #298a2e;
+    /* color: #9a9a9a; */
+}
+
+
+.searchbar {
+    position: relative;
+    width: 600px;
+    cursor: pointer;
+    height: 50px;
+    background: white;
+    box-sizing: border-box;
+    border-radius: 25px;
+    border: 4px solid #ddd;
+    padding: 5px;
+}
+
+input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 42.5px;
+    line-height: 30px;
+    outline: 0;
+    border: 0;
+    display: block;
+    font-size: 1em;
+    border-radius: 20px;
+    padding: 0 20px;
+}
+
+.fa {
+    box-sizing: border-box;
+    padding: 10px;
+    width: 42.5px;
+    height: 42.5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 50%;
+    background-color: #298a2e;
+    color: white;
+    text-align: center;
+    font-size: 1.2em;
+    transition: all 1s;
+}
+
+.fa:hover{
+    background-color: #009933;
+}
+.table-container {
+    max-height: 350px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+.custodian-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custodian-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #298a2e;
+    color: #fff;
+    z-index: 1;
+    padding: 12px;
+}
+
+.custodian-table th,
+.custodian-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.custodian-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.custodian-table tr:hover {
+    background-color: #ddd;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        transition: width 0.5s, opacity 0.5s;
+        opacity: 0;
+        overflow: hidden;
+        z-index: 998;
+    }
+
+    .sidebar.active {
+        width: 60%;
+        height: calc(100vh - 85px);
+        z-index: 999;
+        position: fixed;
+        opacity: 1;
+        transition: width 0.5s, opacity 0.5s;
+    }
+
+    .logout {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .main {
+        position: relative;
+        left: 0;
+        width: 100%;
+        transition: left 0.5s, z-index 0.5s;
+        z-index: 1;
+    }
+
+    .main.active {
+        left: 0; 
+        width: 100%;
+        z-index: 1;
+    }
+}
+
+

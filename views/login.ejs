@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/login.css">
+    <title>Login & SignUp</title>
+</head>
+<body>
+    <div class="login-container">
+        <div class="green-box">
+            <h2>Welcome to our Petty Cash Websystem</h2>
+            <img src="images/niaLogo.png" alt="NIA Logo" class="logo">
+            <p>Our system aims to help your business manage and track small expenses.</p><br>
+            <p>©2024 Petty Cash System</p>
+        </div>
+        
+        <div class="white-box">
+            <div class="tab-header">
+                <div class="active">Login</div>
+                <div>Sign Up</div>
+            </div>
+            
+
+            <div class="tab-content">
+                <div class="tab-body active">
+                    <form action="/login-user" method="post">
+                        <div class="form-element">
+                            <input name="username" type="text" placeholder="Username" required>
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="form-element">
+                            <input name="password" type="password" placeholder="Password" required>
+                            <i class="fas fa-eye"></i>
+                        </div>
+
+                        <div class="form-element">
+                            <input name="type" placeholder="Type" required>
+                        </div>
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+
+                <div class="tab-body">
+                    <form action="/register-user" method="post">
+                        <div class="form-element" >
+                            <input name="username_data" type="text" placeholder="Username" required>
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="form-element">
+                            <input name="password_data" type="password" placeholder="Password" required>
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <button type="submit">Sign Up</button>
+                    </form>
+                    <h3 class="h3Note">Admin sign up only!</h3>
+                    <div>
+                        <% if(message) { %>
+                            <h4><%= message%></h4>
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    let tabPanes = document.querySelectorAll(".tab-header > div");
+    let tabBodies = document.querySelectorAll(".tab-content .tab-body");
+
+    tabPanes.forEach((tab, index) => {
+        tab.addEventListener("click", function () {
+            document.querySelector(".tab-header .active").classList.remove("active");
+            document.querySelector(".tab-content .tab-body.active").classList.remove("active");
+
+         
+            tab.classList.add("active");
+            tabBodies[index].classList.add("active");
+        });
+    });
+});
+
+    </script>
+</body>
+</html>
+
+
+

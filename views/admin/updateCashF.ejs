@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Add Custodian</title>
+    <link rel="stylesheet" href="css/updateCashF.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body> 
+    <div class="sidebar">
+        <ul class="menu">
+            <li>
+                <a href="dashboardAdmin">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="adminViewTransaction">
+                     <i class="fas fa-file"></i>
+                     <span>View Transaction</span>
+                </a> 
+             </li>
+             <li>
+                <a href="addCustodian">
+                     <i class="fas fa-user-plus"></i>
+                     <span>Add Custodian</span>
+                </a> 
+             </li>
+             <li>
+                <a href="upadteCashF">
+                     <i class="fas fa-money-bill-wave"></i>
+                     <span>Update Fund</span>
+                </a> 
+             </li>
+             <li class="logout">
+                <a href="logout">
+                     <i class="fas fa-sign-out-alt"></i>
+                     <span>Logout</span>
+                </a> 
+             </li>
+        </ul>
+    </div>
+
+     <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="title">
+                <span>Petty Cash System</span>
+            </div>
+            <div class="admin">
+                <span>Admin</span>
+            </div>
+        </div>
+
+        <div class="update-fund-container">
+            <!-- <h2>Update Fund</h2> -->
+            <form action="/update-cashfund" method="post">
+                <div class="form-group">
+                    <label for="custodian">Custodian:</label>
+                    <select id="custodian" name="custodian">
+                        <% custodians.forEach(custodian => { %>
+                            <option value="<%= custodian.custodian_no %>"><%= custodian.custodian_no %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="current-fund">Current Cash Fund:</label>
+                    <input type="text" id="current-fund" name="current_fund" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-fund">New Cash Fund: ₱</label>
+                    <input type="text" id="new-fund" name="newfund_data" placeholder="Enter new cash fund">
+                </div>
+                
+                <button id="update-fund-btn">Update Cash Fund</button>
+            </form>
+            
+            <script>
+                document.getElementById('custodian').addEventListener('change', async function() {
+                    const custodianId = this.value;
+                    if (custodianId) {
+                        const response = await fetch(`/custodian-data/${custodianId}`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            document.getElementById('name').value = data.name;
+                            document.getElementById('current-fund').value = `₱ ${data.currentCashFund}`;
+                        } else {
+                            console.error('Failed to retrieve custodian data');
+                        }
+                    }
+                });
+            </script>
+            
+</body>
+</html>

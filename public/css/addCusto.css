@@ -1,0 +1,251 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+body {
+    display: flex;
+    background-color: #eff0f0;
+}
+.sidebar {
+    position: fixed;
+    top: 85px;
+    left: 0;
+    bottom: 0;
+    width: 70px;
+    height: 100vh;
+    padding: 0 0.5rem;
+    color: #fff;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    background: transparent;
+    outline: 2px solid  #298a2e; 
+}
+.sidebar.active {
+    width: 260px;
+    color: #fff;
+    padding: 0 1rem;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    background: #ffffff;
+}
+.sidebar.active .menu li:hover, 
+.active {
+    background: #eff0f0;
+}
+
+.menu {
+    height: 88%;
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    padding: 1rem;
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+}
+.menu li:hover, 
+.active {
+    background: white;
+}
+.menu a:hover {
+    color: #009933;
+}
+.menu a {
+    color: #298a2e;
+    font-size: 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.menu a span {
+    overflow: hidden;
+}
+.menu a i {
+    font-size: 1.3rem;
+}
+.logout {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    width: 100%;
+
+}
+
+/*main*/
+.main {
+    position: absolute;
+    width: calc(100% - 70px);
+    left: 70px;
+    min-height: 100vh;
+    background: var(--white);
+    transition: width 0.5s, left 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main.active {
+    width: calc(100% - 260px);
+    left: 260px; 
+}
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 85px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    background: linear-gradient(to right, #1f6e23, #298a2e, #009933, #298a2e, #1f6e23);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.toggle, .title, .admin {
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    flex: 1;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.admin {
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.toggle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+}
+.form-container {
+    width: 500px;
+    padding: 25px;
+    margin-top: 50px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    color: #298a2e;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-group input:focus,
+.input-group input:focus {
+    border: 1.5px solid #298a2e;
+    outline: none; 
+}
+
+label {
+    color: #298a2e;
+    font-weight: bold;
+    width: 150px;
+}
+
+input[type="text"],
+input[type="password"] {
+    flex-grow: 1;
+    padding: 9px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #298a2e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.submit-btn:hover {
+    background-color: #009933;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        transition: width 0.5s, opacity 0.5s;
+        opacity: 0;
+        overflow: hidden;
+        z-index: 998;
+    }
+
+    .sidebar.active {
+        width: 60%;
+        height: calc(100vh - 85px);
+        z-index: 999;
+        position: fixed;
+        opacity: 1;
+        transition: width 0.5s, opacity 0.5s;
+    }
+
+    .logout {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .form-container {
+        width: 400px;
+    }
+    .main {
+        position: relative;
+        left: 0;
+        width: 100%;
+        transition: left 0.5s, z-index 0.5s;
+        z-index: 1;
+    }
+
+    .main.active {
+        left: 0; 
+        width: 100%;
+        z-index: 1;
+    }
+}

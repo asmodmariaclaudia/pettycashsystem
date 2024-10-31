@@ -1,0 +1,217 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #eff0f0;
+}
+
+.login-container {
+    display: flex;
+    width: 90%;
+    max-width: 800px;
+    height: 70vh;
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.green-box {
+    background-image: url('https://img.freepik.com/premium-photo/abstract-green-wave-background-with-dynamic-shapes_1025753-34355.jpg'); /* Ensure this path is correct */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    padding: 30px;
+    width: 50%;
+    height: 100%;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+}
+
+
+.green-box h2 {
+    margin-bottom: 20px;
+    font-size: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Shadow settings */
+    color: #fff;
+}
+
+.green-box p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.white-box {
+    width: 50%;
+    padding: 20px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tab-header {
+    height: 60px;
+    line-height: 60px;
+    display: flex;
+    justify-content: space-around;
+    background: #ddd;
+    cursor: pointer;
+    margin-bottom: 20px;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+}
+
+.tab-header > div {
+    width: 50%;
+    text-align: center;
+    background: #eff0f0;
+    color: #555;
+    cursor: pointer;
+}
+
+.tab-header > div:first-child {
+    border-top-left-radius: 10px;
+}
+
+.tab-header > div:last-child {
+    border-top-right-radius: 10px;
+}
+
+.tab-header > div:first-child {
+    border-right: 1px solid #ccc;
+}
+
+
+.tab-header > div.active {
+    background: #fff;
+    color: #298a2e;
+    border-bottom: 2px solid #298a2e;
+    font-weight: bold;
+}
+
+.tab-content .tab-body {
+    display: none;
+}
+
+.tab-content .tab-body.active {
+    display: block;
+}
+
+.form-element {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-element input {
+    width: 100%;
+    padding: 12px 40px 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-element i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+
+.logo {
+    width: 120px;
+    margin: 0 auto 20px auto;
+    display: block;
+}
+
+h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 20px 40px 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-element input:focus,
+.input-group input:focus {
+    border: 1.5px solid #298a2e;
+    outline: none; 
+}
+.input-group i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background-color: #298a2e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1rem;
+}
+
+button:hover {
+    background-color: #009933;
+}
+
+.logo {
+    width: 150px;
+    margin: 0 auto 10px auto;
+    display: block;
+}
+
+.h3Note{
+    padding-top: 10%;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .green-box, .white-box {
+        width: 100%;
+        height: auto;
+        border-radius: 0;
+    }
+
+}
