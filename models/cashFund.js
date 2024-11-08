@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       custodian_no: {
         type: DataTypes.STRING,
         allowNull: false,
+        references: {
+          model: 'Custodians', 
+          key: 'custodian_no',
+      },
+
       },
       custodian_name: {
         type: DataTypes.STRING,
@@ -29,16 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     });
   
     CashFund.associate = (models) => {
-      CashFund.belongsTo(models.User, {
-        foreignKey: 'user_id',
-        as: 'user',
-      });
-
-      CashFund.belongsTo(models.Custodian, {
-            foreignKey: 'custodian_no',
-            as: 'custodian',
-        });
-    };
+      CashFund.belongsTo(models.User, { foreignKey: 'user_id' });
+      CashFund.belongsTo(models.Custodian, { foreignKey: 'custodian_no', targetKey: 'custodian_no'});
+  };
   
     return CashFund;
   };

@@ -11,10 +11,17 @@ const login_view = (req, res) => {
 const dashboardAdmin_view = async (req, res) => {
     try {
         const custodians = await models.Custodian.findAll({
-            include: {
-                model: models.User,
-                attributes: ['username'] // Assuming username is in the User model
-            }
+            include: [
+                {
+                    model: models.User,
+                    attributes: ['username'] 
+                },
+
+                {
+                    model: models.CashFund,
+                    attributes: ['amount']
+                }
+        ]
         });
         res.render("admin/dashboardAdmin", { custodians });
     } catch (error) {

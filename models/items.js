@@ -40,9 +40,7 @@ module.exports = (sequelize, DataTypes) => {
   
     Items.associate = (models) => {
       Items.belongsTo(models.Transactions, {
-        foreignKey: 'transaction_id',
-        as: 'transaction',
-      });
+        foreignKey: 'transaction_id'});
     };
   
     return Items;

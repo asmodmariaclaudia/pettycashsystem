@@ -1,0 +1,391 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    background-color: #eff0f0;
+}
+
+.sidebar {
+    position: fixed;
+    top: 85px;
+    left: 0;
+    bottom: 0;
+    width: 70px;
+    height: 100vh;
+    padding: 0 0.5rem;
+    color: #fff;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    background: transparent;
+    outline: 2px solid  #298a2e; 
+}
+
+.sidebar.active {
+    width: 260px;
+    color: #fff;
+    padding: 0 1rem;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    background: #ffffff;
+}
+
+.sidebar.active .menu li:hover, 
+.active {
+    background: #eff0f0;
+}
+
+.menu {
+    height: 88%;
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    padding: 1rem;
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+}
+
+.menu li:hover, 
+.active {
+    background: white;
+}
+
+.menu a:hover {
+    color: #009933;
+}
+
+.menu a {
+    color: #298a2e;
+    font-size: 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center; 
+    gap: 1.5rem;
+}
+
+.menu a span {
+    overflow: hidden;
+}
+
+.menu a i {
+    font-size: 1.3rem;
+}
+
+.logout {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    width: 100%;
+}
+
+.main {
+    position: absolute;
+    width: calc(100% - 70px);
+    left: 70px;
+    min-height: 100vh;
+    background: var(--white);
+    transition: width 0.5s, left 0.5s;
+}
+
+.main.active {
+    width: calc(100% - 260px);
+    left: 260px;
+}
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 85px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    background: linear-gradient(to right, #1f6e23, #298a2e, #009933, #298a2e, #1f6e23);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.toggle, .title, .admin {
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    flex: 1;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.admin {
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.toggle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.transaction-container{
+    padding: 20px;
+    margin: 100px 20px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.voucher-title {
+    text-align: center; /* Center the title */
+    padding: 30px 30px 20px;
+    font-size: 24px; /* Title size */
+    color: #298a2e;
+}
+.print-voucher-container {
+    max-width: 800px; /* Set a maximum width for the container */
+    margin: auto; /* Center the container */
+    padding: 20px; /* Add padding for internal spacing */
+    border: 1px solid #ccc; /* Border around the container */
+    border-radius: 8px; /* Rounded corners */
+    background-color: white; /* Light background color */
+    box-sizing: border-box;
+}
+
+.transaction-title {
+    text-align: center; /* Center the title */
+    padding: 20px;
+    margin-bottom: 20px; /* Space below the title */
+    font-size: 24px; /* Title size */
+    color: black;
+}
+
+.transaction-content {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space between sections */
+    margin-bottom: 20px;
+}
+
+.transaction-form {
+    display: flex;
+    flex-direction: column; /* Stack form groups vertically */
+    gap: 10px; /* Spacing between form groups */
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex; /* Use flexbox for label and input */
+    align-items: center; /* Center items vertically */
+}
+
+.form-group label {
+    width: 200px; /* Fixed width for labels */
+    margin-left: 35px; /* Space between label and input */
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left; /* Align label text to the right */
+}
+
+.form-group input {
+    width: 300px;
+    padding: 10px; /* Padding for inputs */
+    border-bottom: 1px solid black;
+}
+
+.transaction-form input[readonly] {
+    background-color: transparent; /* Ensure read-only inputs have no background */
+}
+
+
+.uploaded-receipts {
+    margin-top: 10px; /* Space above uploaded receipts */
+    border: 1px dashed #ccc; /* Dashed border for receipts area */
+    padding: 10px; /* Padding inside the receipts area */
+    min-height: 50px; /* Minimum height for the area */
+}
+.items-table table {
+    width: 96%; /* Full width for the table */
+    border-collapse: collapse; /* Merge table borders */
+    margin-left: 20px;
+}
+
+.items-table th, .items-table td {
+    padding: 10px; /* Padding inside table cells */
+    border: 1px solid #ccc; /* Table cell borders */
+}
+
+.items-table th {
+    text-align: center; /* Center-align table headers */
+}
+
+.empty-row {
+    height: 60px;
+}
+.item-empty-cell {
+    width: 70%; /* Wider width for Items column */
+}
+
+.amount-empty-cell {
+    width: 30%; /* Narrower width for Amount column */
+}
+
+.total-row {
+    font-weight: bold; /* Bold text for total */
+}
+
+.total-cell {
+    text-align: left; /* Align total text to the left */
+}
+
+.approvedBy-section {
+    text-align: center;
+    margin-top: 30px; /* Adjust for spacing as needed */
+}
+
+.approvedBy-section h3,
+.approvedBy-section p {
+    margin: 5px 0; /* Adjust for spacing between lines */
+}
+
+.approvedBy-section h3 {
+    margin-bottom: 40px;
+}
+#addItemButton {
+    width: 120px;
+    font-weight: bold;
+    margin-left: 20px;
+    background-color: #d3ffd6;
+}
+.action-buttons {
+    display: flex; /* Use flexbox for button layout */
+    justify-content: center; /* Align buttons to the right */
+    margin-top: 40px;
+    margin-bottom: 10px;  /* Space above buttons */
+}
+
+.action-buttons button {
+    margin-left: 10px; /* Space between buttons */
+    padding: 15px 50px; /* Padding inside buttons */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded button corners */
+    background-color: #298a2e; /* Bootstrap primary color */
+    color: white; /* White text for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background change */
+}
+
+.action-buttons button:hover {
+    background-color: #1f6e23; /* Darker shade on hover */
+}
+
+.receipt-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px; /* Adjust as needed */
+}
+
+.receipt-container h3 {
+    font-weight: bold;
+    margin: 40px 20px 10px;
+}
+
+.receipt-container img {
+    width: 500px; /* Fixed width */
+    height: 500px; /* Fixed height */
+    object-fit: cover; /* Ensures the image is contained without distortion */
+    border: 1px solid #ccc; /* Optional: border for better visibility */
+}
+
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        transition: width 0.5s, opacity 0.5s;
+        opacity: 0;
+        overflow: hidden;
+        z-index: 998;
+    }
+
+    .sidebar.active {
+        width: 60%;
+        height: calc(100vh - 85px);
+        z-index: 999;
+        position: fixed;
+        opacity: 1;
+        transition: width 0.5s, opacity 0.5s;
+    }
+
+    .logout {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .main {
+        position: relative;
+        left: 0;
+        width: 100%;
+        transition: left 0.5s, z-index 0.5s;
+        z-index: 1;
+    }
+
+    .main.active {
+        left: 0; 
+        width: 100%;
+        z-index: 1;
+    }
+
+    .print-voucher-container {
+        transform-origin: top left; /* Anchor scaling to top left corner */
+        width: auto; /* Reset width to auto */
+        height: auto; /* Reset height to auto */
+        overflow: hidden; /* Hide any overflow caused by scaling */
+    }
+
+    .transaction-title {
+        font-size: 20px;
+    }
+    .form-group label, .items-table table {
+        margin-left: 0;
+    }
+
+    .items-table table {
+        width: 100%;
+    }
+
+    .receipt-container img {
+        width: 300px; /* Fixed width */
+        height: 300px; /* Fixed height */
+    }
+
+    .print-voucher-container .form-group label,
+    .print-voucher-container .form-group input {
+        width: 175px;
+        font-size: 14px;
+    }
+
+    .transaction-form {
+        gap: 5px; 
+    }
+
+}

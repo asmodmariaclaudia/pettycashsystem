@@ -16,7 +16,7 @@ const add_custodian = async (req, res) => {
 
     try {
         await sequelize.transaction(async (transaction) => {
-            // Create User entry
+            // create the user creds
             const user = await models.User.create(
                 {
                     username: custodian_data.username,
@@ -26,7 +26,7 @@ const add_custodian = async (req, res) => {
                 { transaction }
             );
 
-            // Create Custodian entry linked to the new User
+            // new user is new custodian, they link upon creation
             const custodian = await models.Custodian.create(
                 {
                     user_id: user.user_id,
@@ -37,7 +37,7 @@ const add_custodian = async (req, res) => {
                 { transaction }
             );
 
-            // Create CashFund entry linked to the new Custodian
+            // new custodian has it's own cashfund
             await models.CashFund.create(
                 {
                     user_id: user.user_id,
