@@ -6,9 +6,10 @@ const router = express.Router()
 //Admin routers
 
 router.get("/addCustodian", adminController.add_custodianView)
-router.post("/add-custodian", adminController.add_custodian); // Add POST route
+router.post("/add-custodian", adminController.add_custodian); 
 
 router.get("/custodian-data/:id", adminController.getCustodianData);
+
 
 
 router.get("/updateCashF", adminController.updateCashF_view)

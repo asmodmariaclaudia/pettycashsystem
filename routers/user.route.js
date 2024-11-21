@@ -5,7 +5,10 @@ const router = express.Router();
 
 // User routers and GET
 router.get("/login", userController.login_view);
-router.get("/dashboardAdmin", userController.dashboardAdmin_view); // Ensure this matches the route used in the redirect
+router.get("/dashboardAdmin", userController.dashboardAdmin_view);
+router.get("/dashboardCustodian", userController.custoDash);
+
+router.get('/updateCustodianStatus/:user_id', userController.updateCustodianStatus);
 
 // POST
 router.post("/register-user", userController.save_user);

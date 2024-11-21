@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
   
     Custodian.associate = (models) => {
       Custodian.belongsTo(models.User, { foreignKey: 'user_id' });
-      Custodian.hasOne(models.CashFund, { foreignKey: 'custodian_no', sourceKey: 'custodian_no'});
+      Custodian.hasOne(models.CashFund, { foreignKey: 'custodian_no'});
   };
   
     return Custodian;

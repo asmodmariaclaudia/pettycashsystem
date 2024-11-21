@@ -18,7 +18,7 @@
                 </a>
             </li>
             <li>
-                <a href="adminViewTransaction">
+                <a href="admin-ViewTransactions">
                      <i class="fas fa-file"></i>
                      <span>View Transaction</span>
                 </a> 
@@ -36,7 +36,7 @@
                 </a> 
              </li>
              <li class="logout">
-                <a href="logout">
+                <a href="login">
                      <i class="fas fa-sign-out-alt"></i>
                      <span>Logout</span>
                 </a> 
@@ -88,20 +88,35 @@
             </form>
             
             <script>
-                document.getElementById('custodian').addEventListener('change', async function() {
-                    const custodianId = this.value;
-                    if (custodianId) {
-                        const response = await fetch(`/custodian-data/${custodianId}`);
-                        if (response.ok) {
-                            const data = await response.json();
-                            document.getElementById('name').value = data.name;
-                            document.getElementById('current-fund').value = `₱ ${data.currentCashFund}`;
-                        } else {
-                            console.error('Failed to retrieve custodian data');
-                        }
-                    }
-                });
-            </script>
+                let toggle = document.querySelector('.toggle');
+                 let sidebar = document.querySelector('.sidebar');
+                 let main = document.querySelector('.main');
+         
+                
+                 if (localStorage.getItem('sidebarActive') === 'true') {
+                     sidebar.classList.add('active'); 
+                     main.classList.add('active');
+                 }
+         
+                 toggle.onclick = function () {
+                     sidebar.classList.toggle('active');
+                     main.classList.toggle('active');
+                   
+                     localStorage.setItem('sidebarActive', sidebar.classList.contains('active'));
+                 };
+             
+                 const currentLocation = window.location.pathname;
+                 const menuItems = document.querySelectorAll('.sidebar .menu li a');
+         
+                 menuItems.forEach(item => {
+                     if (item.getAttribute('href') === currentLocation.split('/').pop()) {
+                         item.parentElement.classList.add('active');
+                     }
+                 });
+         
+         
+                 
+             </script>
             
 </body>
 </html>

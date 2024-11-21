@@ -20,7 +20,9 @@ const dashboardAdmin_view = async (req, res) => {
                 {
                     model: models.CashFund,
                     attributes: ['amount']
-                }
+                },
+
+                
         ]
         });
         res.render("admin/dashboardAdmin", { custodians });
@@ -39,7 +41,7 @@ const login_user = async (req, res) => {
     };
 
     try {
-        // Find user by username
+        // find user
         const result = await models.User.findOne({ where: { username: user_data.username } });
         if (!result) {
             return res.render("login", { message: "User not found" });
@@ -55,8 +57,8 @@ const login_user = async (req, res) => {
             };
 
             const token = jwt.sign(user_result, "secretKey");
-            res.cookie("token", token); // Set the token cookie
-            return res.redirect("/dashboardAdmin"); // Redirect to the dashboard
+            res.cookie("token", token); // Set token cookie
+            return res.redirect("/dashboardAdmin"); 
         } else {
             return res.render("login", { message: "Invalid password" });
         }
@@ -87,9 +89,31 @@ const save_user = async (req, res) => {
     }
 };
 
+const updateCustodianStatus = async (req, res) => {
+    const { user_id } = req.params;
+    const { status } = req.query;
+
+    try {
+        //update the custodian's status
+        await models.Custodian.update({ status }, { where: { user_id } });
+
+        // balik dashboard
+        res.redirect('/dashboardAdmin');
+    } catch (error) {
+        console.error('Error updating custodian status:', error);
+        res.status(500).send('Server Error');
+    }
+};
+
+const custoDash = async (req, res) => {
+    res.render("custodian/dashboardCustodian")
+}
+
 module.exports = {
     login_view,
     save_user,
     login_user,
-    dashboardAdmin_view
+    dashboardAdmin_view,
+    updateCustodianStatus,
+    custoDash
 };
