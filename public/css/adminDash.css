@@ -252,7 +252,7 @@ body {
     padding: 5px;
 }
 
-input {
+.inSearch {
     position: absolute;
     top: 0;
     left: 0;
@@ -365,4 +365,78 @@ input {
 a {
     text-decoration: none;
     text-transform: uppercase;
+}
+
+.admin {
+    cursor: pointer;
+}
+
+/* Combined Popup and Content */
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure the popup appears above other content */
+    padding: 20px;
+    box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+
+/* Popup Content Styling */
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    max-width: 90%; /* Ensure responsiveness */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Stack form elements vertically */
+    gap: 15px; /* Space between elements */
+}
+
+/* Header for popup */
+.popup h2 {
+    margin: 0;
+    text-align: center;
+}
+
+/* Form Styling */
+.form-group {
+    display: flex;
+    flex-direction: column; /* Stack form elements vertically */
+    gap: 15px; /* Space between elements */
+}
+
+.form-group label {
+    margin-top: 10px; /* Add spacing between label and input */
+}
+
+.form-group input[type="text"],
+.form-group input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%; /* Ensure the input fields take up the full width of the form */
+    box-sizing: border-box; /* Ensure padding is included within the width */
+}
+
+button {
+    margin-top: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Ensure button fits inside the form */
+}
+
+button:hover {
+    background-color: #0056b3;
 }

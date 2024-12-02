@@ -39,7 +39,7 @@
                 </a> 
              </li>
              <li class="logout">
-                <a href="login">
+                <a href="logout">
                      <i class="fas fa-sign-out-alt"></i>
                      <span>Logout</span>
                 </a> 
@@ -55,17 +55,34 @@
             <div class="title">
                 <span>Petty Cash System</span>
             </div>
-            <div class="admin">
-                <span>Admin</span>
-            </div>
+
+            <div class="admin" id="admin">Admin</div>
+
         </div>
 
     <div class="dashboard-container">
         <div class="topdash">
             <!-- <h2>Dashboard</h2> -->
             <div class="searchbar">
-                <input type="search" placeholder="Search here...">
+                <input class="inSearch" type="search" placeholder="Search here...">
                 <i class="fa fa-search"></i>
+            </div>
+        </div>
+
+        <div id="admin-popup" class="popup">
+            <div class="popup-content">
+                <h2>Edit Admin Details</h2>
+                <form action="/update-admin-details" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="admin-fullname">Full Name:</label>
+                        <input type="text" id="admin-fullname" name="admin_fullname" placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-signature">Upload Signature:</label>
+                        <input type="file" id="admin-signature" name="admin_signature" accept="image/*" required>
+                    </div>
+                    <button type="submit">Save</button>
+                </form>
             </div>
         </div>
 
@@ -84,7 +101,11 @@
                         <tr>
                             <td><strong><%= custodian.custodian_no %></strong></td>
                             <td><%= custodian.custodian_name %></td>
-                            <td>₱<%= custodian.cashFund ? custodian.cashFund.amount.toFixed(2) : '0.00' %></td>
+                            <td>
+                                ₱<%= custodian.CashFund && !isNaN(custodian.CashFund.amount) 
+                                    ? parseFloat(custodian.CashFund.amount).toFixed(2) 
+                                    : '0.00' %>
+                            </td>
                             <td>
                                     <a href="/updateCustodianStatus/<%= custodian.user_id %>?status=<%= custodian.status === 'active' ? 'deactivated' : 'active' %>" 
                                         class="status-link">
@@ -99,6 +120,28 @@
             </table>
         </div>
     </div>
+
+    <script>
+        // Get references to elements
+        const adminElement = document.getElementById('admin');
+        const popup = document.getElementById('admin-popup');
+
+        // Function to show the popup
+        function showPopup() {
+            popup.style.display = 'flex'; // Show the popup
+        }
+
+        // Event listener to open the popup when the admin section is clicked
+        adminElement.addEventListener('click', showPopup);
+
+        // Function to close the popup if clicked outside
+        window.addEventListener('click', function(event) {
+            if (event.target === popup) {
+                popup.style.display = 'none'; // Close the popup if clicked outside
+            }
+        });
+    </script>
+        
 
     <script>
        let toggle = document.querySelector('.toggle');

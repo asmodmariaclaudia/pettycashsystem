@@ -23,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 'active', // Default status as 'active'
       },
+      cashF_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false, 
+        references: {
+          model: 'CashFunds', // Reference to the CashFund table
+          key: 'cashF_id',
+        },
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -37,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
   
     Custodian.associate = (models) => {
       Custodian.belongsTo(models.User, { foreignKey: 'user_id' });
-      Custodian.hasOne(models.CashFund, { foreignKey: 'custodian_no'});
+      Custodian.belongsTo(models.CashFund, { foreignKey: 'cashF_id' });
   };
   
     return Custodian;

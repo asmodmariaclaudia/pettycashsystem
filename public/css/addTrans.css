@@ -183,6 +183,7 @@ body {
 .form-group {
     display: flex; /* Use flexbox for label and input */
     align-items: center; /* Center items vertically */
+    padding: 1%;
 }
 
 .form-group label {
@@ -247,6 +248,7 @@ body {
 
 .total-cell {
     text-align: left; /* Align total text to the left */
+    background-color: rgb(146, 240, 118);
 }
 
 .add-item-section {
@@ -257,7 +259,7 @@ body {
 .add-item-section input {
     margin-right: 10px; /* Space between inputs */
     flex: 1; /* Allow inputs to grow equally */
-    background-color: #f1f1f1;
+    background-color: #dedcdc;
     padding: 15px;
 }
 #addItemButton {

@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custodian Dashboard</title>
-    <link rel="stylesheet" href="css/custoDash.css">
-
+    <link rel="stylesheet" href="/css/custodash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
-<body> 
+<body>
+    <!-- Sidebar -->
     <div class="sidebar">
         <ul class="menu">
             <li>
@@ -17,12 +18,7 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li >
-                <a href="custoViewTrans">
-                     <i class="fas fa-file"></i>
-                     <span>View Transaction</span>
-                </a> 
-             </li>
+            
              <li>
                 <a href="addTrans">
                      <i class="fas fa-plus-circle"></i>
@@ -30,7 +26,7 @@
                 </a> 
              </li>
              <li class="logout">
-                <a href="login">
+                <a href="logout">
                      <i class="fas fa-sign-out-alt"></i>
                      <span>Logout</span>
                 </a> 
@@ -38,175 +34,98 @@
         </ul>
     </div>
 
-     <div class="main">
+    <!-- Main Content -->
+    <div class="main">
+        <!-- Top Bar -->
         <div class="topbar">
-            <div class="toggle">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="title">
-                <span>Petty Cash System</span>
-            </div>
-            <div class="admin">
-                <span>Admin</span>
-            </div>
+            <div class="toggle"><i class="fas fa-bars"></i></div>
+            <div class="title">Custodian Dashboard</div>
+            <div class="admin">Hello, Custodian!</div>
         </div>
 
+        <!-- Dashboard Content -->
         <div class="dashboard-container">
+
             <div class="topdash">
                 <!-- <h2>Transaction</h2> -->
                 <div class="cash-fund-container">
                     <label for="cashFundDisplay">Cash Fund:</label>
-                    <input type="text" id="cashFundDisplay" value=" " readonly> <!-- Initially empty -->
+                    <input type="text" id="cashFundDisplay" value="<%= cashFund.amount === '0.00' ? 'No Funds Available' : cashFund.amount %>" readonly>
                 </div>
             </div>
-    
+
+
+            <div class="search_topdash">
+                <!-- <h2>Transaction</h2> -->
+                <div class="searchbar">
+                    <input type="search" placeholder="Search here...">
+                    <i class="fa fa-search"></i>
+                </div>
+            </div>
+
+            <!-- Transaction Table -->
             <div class="table-container">
                 <table class="custodian-table">
                     <thead>
                         <tr>
                             <th>Transaction ID</th>
                             <th>Date</th>
-                            <th>OR No.</th>
                             <th>Description</th>
                             <th>Total</th>
                             <th>Purchaser</th>
                             <th>Employee ID</th>
+                            <th>Custodian</th> <!--the custodian who made the transaction-->
+                            <th>Status</th>
+                            <th>OR No.</th>
                             <th>Store Name</th>
-                            <th>Custodian</th>
-                            <th>Refund</th>
+                            <th>Refund</th> 
+                            <th>Action</th> 
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>TX-001</td>
-                            <td>2024-10-25</td>
-                            <td>OR-1001</td>
-                            <td>Office Supplies</td>
-                            <td>$150.00</td>
-                            <td>Jane Doe</td>
-                            <td>EMP-123</td>
-                            <td>Stationery Mart</td>
-                            <td>John Smith</td>
-                            <td>$0.00</td>
-                        </tr>
-                        <tr>
-                            <td>TX-002</td>
-                            <td>2024-10-26</td>
-                            <td>OR-1002</td>
-                            <td>Travel Expenses</td>
-                            <td>$250.00</td>
-                            <td>Mark Johnson</td>
-                            <td>EMP-456</td>
-                            <td>Travel Solutions</td>
-                            <td>Emily White</td>
-                            <td>$50.00</td>
-                        </tr>
-                        <tr>
-                            <td>TX-003</td>
-                            <td>2024-10-27</td>
-                            <td>OR-1003</td>
-                            <td>Equipment Repair</td>
-                            <td>$300.00</td>
-                            <td>Alice Brown</td>
-                            <td>EMP-789</td>
-                            <td>Tech Repairs Co.</td>
-                            <td>Michael Green</td>
-                            <td>$0.00</td>
-                        </tr>
-                        <tr>
-                            <td>TX-004</td>
-                            <td>2024-10-28</td>
-                            <td>OR-1004</td>
-                            <td>Client Meeting</td>
-                            <td>$100.00</td>
-                            <td>Lisa Ray</td>
-                            <td>EMP-012</td>
-                            <td>Cafe 24/7</td>
-                            <td>Sarah Black</td>
-                            <td>$10.00</td>
-                        </tr>
-                        <tr>
-                            <td>TX-001</td>
-                            <td>2024-10-25</td>
-                            <td>OR-1001</td>
-                            <td>Office Supplies</td>
-                            <td>$150.00</td>
-                            <td>Jane Doe</td>
-                            <td>EMP-123</td>
-                            <td>Stationery Mart</td>
-                            <td>John Smith</td>
-                            <td>$0.00</td>
-                        </tr>
-                        <tr>
-                            <td>TX-002</td>
-                            <td>2024-10-26</td>
-                            <td>OR-1002</td>
-                            <td>Travel Expenses</td>
-                            <td>$250.00</td>
-                            <td>Mark Johnson</td>
-                            <td>EMP-456</td>
-                            <td>Travel Solutions</td>
-                            <td>Emily White</td>
-                            <td>$50.00</td>
-                        </tr>
-                        <tr>
-                            <td>TX-003</td>
-                            <td>2024-10-27</td>
-                            <td>OR-1003</td>
-                            <td>Equipment Repair</td>
-                            <td>$300.00</td>
-                            <td>Alice Brown</td>
-                            <td>EMP-789</td>
-                            <td>Tech Repairs Co.</td>
-                            <td>Michael Green</td>
-                            <td>$0.00</td>
-                        </tr>
-                        <tr>
-                            <td>TX-004</td>
-                            <td>2024-10-28</td>
-                            <td>OR-1004</td>
-                            <td>Client Meeting</td>
-                            <td>$100.00</td>
-                            <td>Lisa Ray</td>
-                            <td>EMP-012</td>
-                            <td>Cafe 24/7</td>
-                            <td>Sarah Black</td>
-                            <td>$10.00</td>
-                        </tr>
+                        <% transactions.forEach(transaction => { %>
+                            <tr>
+                                <td><%= transaction.transaction_id %></td>
+                                <td><%= transaction.description %></td>
+                                <td><%= transaction.amountGiven %></td>
+                                <td><%= transaction.custodianName %></td>
+                                <td><img src="<%= transaction.receiptImg %>" alt="Receipt" class="receipt-img" /></td>
+                                <td><%= transaction.purchaser %></td>
+                                <td><%= transaction.employeeId %></td>
+                                <td><%= transaction.personalContri %></td>
+                                <td><%= transaction.storeName %></td>
+                                <td><%= transaction.total %></td>
+                                <td><%= transaction.status %></td>
+                                <td>
+                                    <% if (transaction.status === 'approved') { %>
+                                        <a href="/createVoucher/<%= transaction.transaction_id %>">Create Voucher</a>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
                     </tbody>
+                    
                 </table>
-            </div>        
+            </div>
         </div>
+    </div>
+    
 
+    <!-- JavaScript -->
     <script>
-       let toggle = document.querySelector('.toggle');
-        let sidebar = document.querySelector('.sidebar');
-        let main = document.querySelector('.main');
-
-       
-        if (localStorage.getItem('sidebarActive') === 'true') {
-            sidebar.classList.add('active'); 
-            main.classList.add('active');
-        }
-
-        toggle.onclick = function () {
+        // Sidebar toggle functionality
+        const toggle = document.querySelector('.toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const main = document.querySelector('.main');
+    
+        toggle.addEventListener('click', () => {
             sidebar.classList.toggle('active');
             main.classList.toggle('active');
-          
-            localStorage.setItem('sidebarActive', sidebar.classList.contains('active'));
-        };
-    
-        const currentLocation = window.location.pathname;
-        const menuItems = document.querySelectorAll('.sidebar .menu li a');
-
-        menuItems.forEach(item => {
-            if (item.getAttribute('href') === currentLocation.split('/').pop()) {
-                item.parentElement.classList.add('active');
-            }
         });
-
-
-        
+    
+       
+    
     </script>
+    
 </body>
 </html>

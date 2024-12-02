@@ -17,12 +17,7 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li >
-                <a href="custoViewTrans">
-                     <i class="fas fa-file"></i>
-                     <span>View Transaction</span>
-                </a> 
-             </li>
+            
              <li>
                 <a href="addTrans">
                      <i class="fas fa-plus-circle"></i>
@@ -30,7 +25,7 @@
                 </a> 
              </li>
              <li class="logout">
-                <a href="login">
+                <a href="logout">
                      <i class="fas fa-sign-out-alt"></i>
                      <span>Logout</span>
                 </a> 
@@ -54,90 +49,181 @@
         <div class="add-transaction-container">
             <h2 class="transaction-title">Add Transaction</h2>
             <div class="transaction-content">
+
+                <!--first to appear-->
                 <div class="transaction-form">
-                    <div class="form-group">
-                        <label for="transactionId">Transaction ID:</label>
-                        <input type="text" id="transactionId">
-                    </div>
-                    <div class="form-group">
-                        <label for="transactionDate">Date:</label>
-                        <input type="date" id="transactionDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="amountGiven">Amount Given:</label>
-                        <input type="number" id="amountGiven">
-                    </div>
-                    <div class="form-group">
-                        <label for="orNumber">OR No.:</label>
-                        <input type="text" id="orNumber">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description:</label>
-                        <input type="text" id="description">
-                    </div>
-                    <div class="form-group">
-                        <label for="total">Total:</label>
-                        <input type="number" id="total" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="purchaser">Purchaser:</label>
-                        <input type="text" id="purchaser">
-                    </div>
-                    <div class="form-group">
-                        <label for="employeeId">Employee ID:</label>
-                        <input type="text" id="employeeId">
-                    </div>
-                    <div class="form-group">
-                        <label for="personalContributions">Personal Contributions:</label>
-                        <input type="number" id="personalContributions">
-                    </div>
-                    <div class="form-group">
-                        <label for="storeName">Store Name:</label>
-                        <input type="text" id="storeName">
-                    </div>
-                </div>                
-        
-                <div class="receipts-section">
-                    <label for="receiptsUpload">Receipts:</label>
-                    <input type="file" id="receiptsUpload" multiple>
-                    <div class="uploaded-receipts">
-                        <!-- Uploaded receipts will be listed here -->
-                    </div>
+                    <form action="/addTransaction" method="post">
+
+                        <div class="form-group">
+                            <label for="custodian_name">Custodian Name:</label>
+                            <input type="text" id="custodian_name" name="cusName" value="<%= custodian_name %>" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="purchaser">Purchaser:</label>
+                            <input type="text" id="purchaser" name="purchaser">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="employeeId">Employee ID:</label>
+                            <input type="text" id="employeeId" name="employeeId">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amountGiven">Amount Given:</label>
+                            <input type="number" id="amountGiven" name="amountGive">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <input type="text" id="description" name="description">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="total">Total:</label>
+                            <input type="number" id="total" name="total" readonly>
+                        </div>
+
+                        <div class="items-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Items</th>
+                                        <th>Amount</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="total-row">
+                                        <td colspan="4" class="total-cell">Total:</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="add-item-section">
+                            <input type="text" name="items[0][itemName]" placeholder="Item Name">
+                            <input type="text" name="items[0][itemAmount]" placeholder="P0.00">
+                            <input type="text" name="items[0][itemQuantity]" placeholder="Quantity">
+                            <button id="addItemButton">Add Item</button>
+                        </div>
+                        
+
+                        <div class="action-buttons">
+                            <!-- Buttons for partial transaction -->
+                            <div id="partialButtons" style="display: block;">
+                                <button id="addTransactionButton" type="submit">Make Transaction</button>
+                                <button id="cancelTransactionButton" type="button">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <form action="/updateTransaction" method="post" style="display: none;">
+                        <!-- Fields for additional data upon approval -->
+                        <div id="additionalFields">
+                            <div class="form-group">
+                                <label for="orNumber">OR No.:</label>
+                                <input type="text" id="orNumber" name="orNumber">
+                            </div>
+                            <div class="form-group">
+                                <label for="personalContributions">Personal Contributions:</label>
+                                <input type="number" id="personalContributions" name="personalContributions">
+                            </div>
+                            <div class="form-group">
+                                <label for="storeName">Store Name:</label>
+                                <input type="text" id="storeName" name="storeName">
+                            </div>
+                            <div class="receipts-section">
+                                <label for="receiptsUpload">Receipts:</label>
+                                <input type="file" id="receiptsUpload" name="receiptsUpload[]" multiple>
+                                <div class="uploaded-receipts">
+                                    <!-- Uploaded receipts will be listed here -->
+                                </div>
+                            </div>
+
+                            <!-- Buttons for approved transaction -->
+                            <div id="approvedButtons" style="display: none;">
+                                <button id="submitAdditionalDetailsButton" type="submit">Submit Additional Details</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        
-            <div class="items-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Items</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="empty-row">
-                            <td class="item-empty-cell"></td> <!-- Empty row for added items -->
-                            <td class="amount-empty-cell"></td> <!-- Empty row for added items -->
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="2" class="total-cell">Total:</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-        
-            <div class="add-item-section">
-                <input type="text" placeholder="Item Name" id="itemNameInput">
-                <input type="text" placeholder="P0.00" id="itemPriceInput">
-                <button id="addItemButton">Add Item</button>
-            </div>
-        
-            <div class="action-buttons">
-                <button id="addTransactionButton">Add</button>
-                <button id="cancelTransactionButton">Cancel</button>
-            </div>
         </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const addItemButton = document.getElementById('addItemButton');
+                const itemsTableBody = document.querySelector('.items-table tbody');
+                const totalCell = document.querySelector('.items-table .total-cell');
+                const totalInput = document.getElementById('total'); // Reference to the total input field
+                let itemCount = 1; // Track the item count dynamically
+
+                // Initialize total
+                let total = 0;
+
+                // Function to update the total price
+                function updateTotal() {
+                    totalCell.textContent = `Total: ₱${total.toFixed(2)}`;
+                    totalInput.value = total.toFixed(2); // Update the input field
+                }
+
+                // Handle the "Add Item" button click
+                addItemButton.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent form submission
+
+                    // Get the input values
+                    const itemNameInput = document.querySelector('[name="items[0][itemName]"]');
+                    const itemPriceInput = document.querySelector('[name="items[0][itemAmount]"]');
+                    const itemQuantityInput = document.querySelector('[name="items[0][itemQuantity]"]');
+
+                    const itemName = itemNameInput.value.trim();
+                    const itemPrice = parseFloat(itemPriceInput.value.trim());
+                    const itemQuantity = parseInt(itemQuantityInput.value.trim(), 10);
+
+                    // Validate inputs
+                    if (!itemName || isNaN(itemPrice) || itemPrice <= 0 || isNaN(itemQuantity) || itemQuantity <= 0) {
+                        alert('Please enter valid item details: name, price, and quantity.');
+                        return;
+                    }
+
+                    // Calculate the row total
+                    const rowTotal = itemPrice * itemQuantity;
+
+                    // Create a new row for the item
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${itemName}</td>
+                        <td>₱${itemPrice.toFixed(2)}</td>
+                        <td>${itemQuantity}</td>
+                        <td>₱${rowTotal.toFixed(2)}</td>
+                    `;
+
+                    // Append the new row to the table
+                    itemsTableBody.insertBefore(newRow, itemsTableBody.querySelector('.total-row'));
+
+                    // Update the overall total
+                    total += rowTotal;
+                    updateTotal();
+
+                    // Increment the item count and update the input names
+                    itemCount++;
+
+                    // Clear the input fields for the next item
+                    itemNameInput.value = '';
+                    itemPriceInput.value = '';
+                    itemQuantityInput.value = '';
+
+                    // Update the input field names for the next item
+                    itemNameInput.setAttribute('name', `items[${itemCount}][itemName]`);
+                    itemPriceInput.setAttribute('name', `items[${itemCount}][itemAmount]`);
+                    itemQuantityInput.setAttribute('name', `items[${itemCount}][itemQuantity]`);
+                });
+            });
+        </script>
+        
+        
         
 
     <script>

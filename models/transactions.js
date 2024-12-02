@@ -20,15 +20,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       oRNo: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       amountGiven: {
         type: DataTypes.DECIMAL(10, 2), // Amount with two decimal places
         allowNull: false,
       },
+      custodianName: {
+        type: DataTypes.STRING,
+        allowNull: false, // Ensure this is always provided
+      },
       receiptImg: {
-        type: DataTypes.STRING, // Path or URL of the receipt image
-        allowNull: false,
+        type: DataTypes.STRING, 
+        allowNull: true,
       },
       purchaser: {
         type: DataTypes.STRING,
@@ -40,28 +44,20 @@ module.exports = (sequelize, DataTypes) => {
       },
       personalContri: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
+        allowNull: true,
       },
       storeName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       total: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
-      voucherNo: {
-        type: DataTypes.STRING,
+      status: {
+        type: DataTypes.ENUM('pending', 'approved', 'rejected'),
         allowNull: false,
-        unique: true, // Ensures voucherNo is unique
-      },
-      items_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Items', // Reference to the Items table
-          key: 'items_id',
-        },
+        defaultValue: 'pending',
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -76,15 +72,12 @@ module.exports = (sequelize, DataTypes) => {
     });
   
     Transactions.associate = (models) => {
-      Transactions.belongsTo(models.User, {
-        foreignKey: 'user_id',
-        as: 'user',
-      });
-  
-      Transactions.belongsTo(models.Items, {
-        foreignKey: 'items_id',
-        as: 'items',
-      });
+      Transactions.belongsTo(models.User, { foreignKey: 'user_id' });
+
+      Transactions.hasMany(models.Items, { foreignKey: 'transaction_id' });
+
+      Transactions.hasOne(models.Voucher, { foreignKey: 'transaction_id' });
+
     };
   
     return Transactions;

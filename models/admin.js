@@ -9,6 +9,14 @@ module.exports = (sequelize, DataTypes) => {
         key: 'user_id',
       },
     },
+    full_name: {
+      type: DataTypes.STRING, 
+      allowNull: false,       
+    },
+    signature: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -2,9 +2,10 @@ const models = require('../models');
 const sequelize = models.sequelize; 
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
+const { Custodian, CashFund } = require('../models');  // Import the models
 
 const login_view = (req, res) => {
-    const message = req.query.message || ""; // Default to empty string if not defined
+    const message = req.query.message || ""; 
     res.render("login", { message });
 };
 
@@ -14,16 +15,13 @@ const dashboardAdmin_view = async (req, res) => {
             include: [
                 {
                     model: models.User,
-                    attributes: ['username'] 
+                    attributes: ['username'], // Fetching the username for display
                 },
-
                 {
                     model: models.CashFund,
-                    attributes: ['amount']
+                    attributes: ['amount'], // Fetching the cash fund amount
                 },
-
-                
-        ]
+            ],
         });
         res.render("admin/dashboardAdmin", { custodians });
     } catch (error) {
@@ -36,8 +34,7 @@ const dashboardAdmin_view = async (req, res) => {
 const login_user = async (req, res) => {
     const user_data = {
         username: req.body.username,
-        password: req.body.password,
-        userType: req.body.type
+        password: req.body.password
     };
 
     try {
@@ -47,20 +44,32 @@ const login_user = async (req, res) => {
             return res.render("login", { message: "User not found" });
         }
 
-        // Assuming you are hashing passwords, use bcrypt to compare
+        // hashing passwords, use bcrypt to compare
         const isPasswordValid = bcrypt.compareSync(user_data.password, result.password);
+        
         if (isPasswordValid) {
             const user_result = {
                 id: result.user_id,
                 username: result.username,
                 userType: result.userType,
             };
+            
+            //the type of user
+            if (user_result.userType === "admin") {
+                //has token when signed
+                const token = jwt.sign(user_result, "secretKey");
+                res.cookie("token", token); // Set token cookie
+                return res.redirect("/dashboardAdmin");
 
-            const token = jwt.sign(user_result, "secretKey");
-            res.cookie("token", token); // Set token cookie
-            return res.redirect("/dashboardAdmin"); 
+            } else if (user_result.userType === "custodian") {
+                //has token when signed
+                const token = jwt.sign(user_result, "secretKey");
+                res.cookie("token", token); // Set token cookie
+                return res.redirect("/dashboardCustodian"); // 
+            }
+
         } else {
-            return res.render("login", { message: "Invalid password" });
+            return res.render("login", { message: "Invalid password / user does not exist!" });
         }
     } catch (error) {
         console.log(error);
@@ -72,22 +81,36 @@ const save_user = async (req, res) => {
     const user_data = {
         username: req.body.username_data,
         password: req.body.password_data,
-        userType: 'admin'
+        userType: 'admin',
     };
 
     try {
+        // Start a Sequelize transaction
         await sequelize.transaction(async (transaction) => {
+            // Create User
             const user = await models.User.create(user_data, { transaction });
+            
+            // Validate admin creation
             if (user.userType === 'admin') {
-                await models.Admin.create({ user_id: user.user_id }, { transaction });
+                await models.Admin.create(
+                    {
+                        user_id: user.user_id,
+                        full_name: 'admin',
+                        signature: req.body.signature || null,
+                    },
+                    { transaction }
+                );
             }
-            res.redirect("/login?message=Success!"); 
+
+            // Commit transaction and redirect
+            res.redirect("/login?message=Success!");
         });
     } catch (error) {
         console.error("Transaction Error:", error);
-        res.redirect("/login?message=ServerError!"); 
+        res.redirect("/login?message=ServerError!");
     }
 };
+
 
 const updateCustodianStatus = async (req, res) => {
     const { user_id } = req.params;
@@ -106,7 +129,40 @@ const updateCustodianStatus = async (req, res) => {
 };
 
 const custoDash = async (req, res) => {
-    res.render("custodian/dashboardCustodian")
+    try {
+        const userId = req.user.user_id;  // Assuming req.user contains the logged-in user's info
+        const custodian = await Custodian.findOne({
+            where: { user_id: userId },
+            include: {
+                model: CashFund,
+                attributes: ['amount']
+            }
+        });
+
+        // Fetch all transactions for the custodian using user_id
+        const transactions = await models.Transaction.findAll({
+            where: { user_id: userId },  // Filtering transactions by user_id (custodian's user_id)
+            attributes: ['transaction_id', 'description', 'oRNo', 'amountGiven', 'custodianName', 'receiptImg', 'purchaser', 'employeeId', 'personalContri', 'storeName', 'total', 'status']
+        });
+
+        console.log('Fetched Custodian:', custodian);
+        console.log('CashFund Amount:', custodian.CashFund ? custodian.CashFund.amount : 'N/A');
+
+        // Pass the CashFund amount to the view
+        res.render('custodian/dashboardCustodian', { 
+            cashFund: custodian.CashFund ? custodian.CashFund : { amount: 'N/A' }  // Pass full CashFund or default
+        });
+    } catch (error) {
+        console.error('Error fetching custodian data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+const logout = (req, res) => {
+    res.cookie("token", '', { maxAge: 1000} )
+    const message = req.query.message || "";
+    res.render("login", { message })
 }
 
 module.exports = {
@@ -115,5 +171,6 @@ module.exports = {
     login_user,
     dashboardAdmin_view,
     updateCustodianStatus,
-    custoDash
+    custoDash,
+    logout
 };

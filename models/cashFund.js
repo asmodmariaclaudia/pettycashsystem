@@ -14,19 +14,6 @@ module.exports = (sequelize, DataTypes) => {
           key: 'user_id',
         },
       },
-      custodian_no: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        references: {
-          model: 'Custodians', 
-          key: 'custodian_no',
-      },
-
-      },
-      custodian_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       amount: {
         type: DataTypes.DECIMAL(10, 2), // Change as necessary for your needs
         allowNull: false,
@@ -35,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   
     CashFund.associate = (models) => {
       CashFund.belongsTo(models.User, { foreignKey: 'user_id' });
-      CashFund.belongsTo(models.Custodian, { foreignKey: 'custodian_no'});
+      CashFund.hasMany(models.Custodian, { foreignKey: 'cashF_id'});
   };
   
     return CashFund;
