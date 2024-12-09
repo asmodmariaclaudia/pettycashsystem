@@ -52,9 +52,7 @@
             <div class="title">
                 <span>Petty Cash System</span>
             </div>
-            <div class="admin" id="admin">
-                <span>Admin</span>
-            </div>
+            <div class="admin" id="admin"><%= adminFullName %></div>
         </div>
 
         <div class="form-container">
@@ -82,8 +80,33 @@
     
                 <button type="submit" class="submit-btn">Create Custodian</button>
             </form>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
         </div>
     </div>
+
+    <script>
+        // Display toast notification
+        const showToast = (message, type) => {
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                backgroundColor: type === "success" ? "green" : "red",
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+            }).showToast();
+        };
+    
+        // Trigger toast notification if message is available
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get("message");
+        const type = urlParams.get("type"); // "success" or "error"
+        if (message) {
+            showToast(message, type);
+        }
+    </script>
 
 
     <script>

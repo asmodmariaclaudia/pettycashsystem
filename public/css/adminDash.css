@@ -149,6 +149,7 @@ body {
     margin: 20px;
     background-color: white; 
     border-radius: 10px;
+    height: 50%;
 }
 
 .search {
@@ -287,7 +288,6 @@ body {
     background-color: #009933;
 }
 .table-container {
-    max-height: 350px;
     overflow-y: auto;
     border: 1px solid #ddd;
 }
@@ -452,4 +452,45 @@ button:hover {
 
 .statusBut.deactivated {
     background-color: red; /* Color for deactivated */
+}
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 15px 20px;
+    color: #fff;
+    background-color: red;
+    border-radius: 5px;
+    display: none;
+    animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+}
+
+.toast.success {
+    background-color: green;
+}
+
+.toast.error {
+    background-color: red;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

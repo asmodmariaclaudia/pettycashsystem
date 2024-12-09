@@ -23,15 +23,28 @@ const check_user_auth = (req, res, next) => {
 };
 
 
-// Check if user is NOT authenticated (used for login and register pages)
+
 const check_user_not_auth = (req, res, next) => {
     const token = req.cookies.token;
 
     if (token) {
-        return res.redirect("/dashboardAdmin"); // Redirect authenticated users to the admin dashboard
-    } else {
-        return next(); // Continue if user is not authenticated
+        try {
+            // Verify token and decode user information
+            const decodedUser = jwt.verify(token, "secretKey");
+
+            if (decodedUser.userType === "admin") {
+                return res.redirect("/dashboardAdmin");
+            } else if (decodedUser.userType === "custodian") {
+                return res.redirect("/dashboardCustodian");
+            } else {
+                return res.clearCookie("token").redirect("/login");
+            }
+        } catch (err) {
+            console.error(err);
+            return res.clearCookie("token").redirect("/login");
+        }
     }
+    next(); // Continue if user is not authenticated
 };
 
 module.exports = {

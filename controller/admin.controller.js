@@ -6,9 +6,30 @@ const { Transactions } = require('../models');
 
 
 
-const add_custodianView = (req, res) => {
-    res.render("admin/addCustodian");
+const add_custodianView = async (req, res) => {
+    try {
+        // Fetch the admin's full name
+        const admin = await models.Admin.findOne({
+            where: { user_id: req.user.user_id }, // Assuming req.user.id contains the logged-in user's ID
+            include: {
+                model: models.User,
+                attributes: ['username'], // Include additional User attributes if needed
+            },
+        });
+
+        const { message, type } = req.query;
+
+        res.render("admin/addCustodian", {
+            adminFullName: admin ? admin.full_name : "Admin", // Default to "Admin" if no full_name
+        });
+    } catch (error) {
+        console.error("Error fetching admin full name:", error);
+        res.render("admin/addCustodian", {
+            adminFullName: "Admin", // Default to "Admin" on error
+        });
+    }
 };
+
 
 const add_custodian = async (req, res) => {
     const custodian_data = {
@@ -52,11 +73,12 @@ const add_custodian = async (req, res) => {
                 { transaction }
             );
 
-            res.redirect("/addCustodian?message=Success!");
+
+            res.redirect("/addCustodian?message=Custodian created&type=success");
         });
     } catch (error) {
         console.error("Transaction Error:", error);
-        res.redirect("/addCustodian?message=ServerError!");
+        res.redirect("/addCustodian?message=An error occurred creating custodian.&type=error");
     }
 };
 
@@ -65,6 +87,15 @@ const add_custodian = async (req, res) => {
 
 const updateCashF_view = async (req, res) => {
     try {
+
+        const admin = await models.Admin.findOne({
+            where: { user_id: req.user.user_id }, // Assuming req.user.id contains the logged-in user's ID
+            include: {
+                model: models.User,
+                attributes: ['username'], // Include additional User attributes if needed
+            },
+        });
+
         const custodians = await models.Custodian.findAll({
             include: {
                 model: models.User,
@@ -74,10 +105,10 @@ const updateCashF_view = async (req, res) => {
 
         const { message, type } = req.query;
 
-        res.render("admin/updateCashF", { custodians, message, type });
+        res.render("admin/updateCashF", { custodians, message, type, adminFullName: admin ? admin.full_name : "Admin", });
     } catch (error) {
         console.error("Error fetching custodians:", error);
-        res.render("admin/updateCashF", { custodians: [], message: "An error occurred while loading data.", type: "error" });
+        res.render("admin/updateCashF", { custodians: [], message: "An error occurred while loading data.", type: "error", adminFullName: "Admin", });
     }
 };
 
@@ -197,6 +228,15 @@ const update_admin = async (req, res) => {
 
 const getAdminTransactions = async (req, res) => {
     try {
+
+        const admin = await models.Admin.findOne({
+            where: { user_id: req.user.user_id }, // Assuming req.user.id contains the logged-in user's ID
+            include: {
+                model: models.User,
+                attributes: ['username'], // Include additional User attributes if needed
+            },
+        });
+
         const transactions = await Transactions.findAll({
             attributes: [
               'transaction_id',
@@ -215,8 +255,10 @@ const getAdminTransactions = async (req, res) => {
             ]
         });
 
+        const { message, type } = req.query;
+
         // Render the 'adminViewTransactions' view and pass the transactions
-        res.render("admin/adminViewTransaction", { transactions });
+        res.render("admin/adminViewTransaction", { transactions, adminFullName: admin ? admin.full_name : "Admin", });
     } catch (error) {
         console.error('Error fetching transactions:', error);
         res.status(500).send('Internal Server Error');
@@ -242,10 +284,10 @@ const approveTransaction = async (req, res) => {
         transaction.approvedBy = adminId; // Assign the approver ID
         await transaction.save();
 
-        res.redirect('/admin-ViewTransactions'); // Refresh view with updated data
+        res.redirect('/admin-ViewTransactions?message=Transaction Approved!&type=success'); // Refresh view with updated data
     } catch (error) {
         console.error('Error approving transaction:', error);
-        res.status(500).send('Internal Server Error');
+        res.redirect('/admin-ViewTransactions?message=Error!&type=error'); // Refresh view with updated data
     }
 };
 
@@ -265,10 +307,10 @@ const rejectTransaction = async (req, res) => {
         transaction.approvedBy = null; // Clear approver field in case of rejection
         await transaction.save();
 
-        res.redirect('/admin-ViewTransactions'); // Refresh view with updated data
+        res.redirect('/admin-ViewTransactions?message=Transaction Rejected!&type=success'); // Refresh view with updated data
     } catch (error) {
         console.error('Error rejecting transaction:', error);
-        res.status(500).send('Internal Server Error');
+        res.redirect('/admin-ViewTransactions?message=Error!&type=error'); // Refresh view with updated data
     }
 };
 

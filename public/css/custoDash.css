@@ -206,7 +206,6 @@ body {
 }
 
 .table-container {
-    max-height: 360px;
     overflow-y: auto;
     border: 1px solid #ddd;
     width: 100%;

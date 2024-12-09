@@ -440,6 +440,19 @@ p {
     text-decoration: underline;
 }
 
+.grandTotal{
+    font-size: larger;
+}
+
+.transaction-form1 {
+    margin-top: 5%;
+    display: flex;
+    flex-direction: column; /* Stack form groups vertically */
+    gap: 10px; /* Spacing between form groups */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 
 
 

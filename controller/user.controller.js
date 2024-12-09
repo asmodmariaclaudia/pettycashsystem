@@ -12,6 +12,15 @@ const login_view = (req, res) => {
 
 const dashboardAdmin_view = async (req, res) => {
     try {
+        // Fetch the admin's full name using the Admin model
+        const admin = await models.Admin.findOne({
+            where: { user_id: req.user.user_id }, // Assuming req.user.id contains the logged-in user's ID
+            include: {
+                model: models.User,
+                attributes: ['username'], // Include additional User attributes if needed
+            },
+        });
+
         const custodians = await models.Custodian.findAll({
             include: [
                 {
@@ -24,12 +33,22 @@ const dashboardAdmin_view = async (req, res) => {
                 },
             ],
         });
-        res.render("admin/dashboardAdmin", { custodians });
+
+        const { message, type } = req.query;
+
+        res.render("admin/dashboardAdmin", {
+            custodians,
+            adminFullName: admin ? admin.full_name : "Admin", // Default to "Admin" if no full_name
+        });
     } catch (error) {
-        console.error("Error fetching custodians:", error);
-        res.render("admin/dashboardAdmin", { custodians: [] });
+        console.error("Error fetching data:", error);
+        res.render("admin/dashboardAdmin", {
+            custodians: [],
+            adminFullName: "Admin", // Default to "Admin" on error
+        });
     }
 };
+
 
 
 const login_user = async (req, res) => {
@@ -39,34 +58,39 @@ const login_user = async (req, res) => {
     };
 
     try {
-        // find user
+        // Find the user in the database
         const result = await models.User.findOne({ where: { username: user_data.username } });
         if (!result) {
             return res.redirect("/login?message=User not found&type=error");
         }
 
-        // hashing passwords, use bcrypt to compare
+        // Compare hashed passwords
         const isPasswordValid = bcrypt.compareSync(user_data.password, result.password);
-        
+
         if (isPasswordValid) {
             const user_result = {
                 id: result.user_id,
                 username: result.username,
                 userType: result.userType,
             };
-            
-            //the type of user
-            if (user_result.userType === "admin") {
-                //has token when signed
-                const token = jwt.sign(user_result, "secretKey");
-                res.cookie("token", token); // Set token cookie
-                return res.redirect("/dashboardAdmin");
 
-            } else if (user_result.userType === "custodian") {
-                //has token when signed
+            // Check if the user is a custodian
+            if (user_result.userType === "custodian") {
+                // Find the associated custodian record to check the status
+                const custodian = await models.Custodian.findOne({ where: { user_id: result.user_id } });
+
+                if (custodian.status === "deactivated") {
+                    return res.redirect("/login?message=It seems you are deactivated, please contact the admin&type=error");
+                }
+
                 const token = jwt.sign(user_result, "secretKey");
-                res.cookie("token", token); // Set token cookie
-                return res.redirect("/dashboardCustodian"); // 
+                res.cookie("token", token);
+                return res.redirect("/dashboardCustodian");
+
+            } else if (user_result.userType === "admin") {
+                const token = jwt.sign(user_result, "secretKey");
+                res.cookie("token", token);
+                return res.redirect("/dashboardAdmin");
             }
 
         } else {
@@ -74,9 +98,10 @@ const login_user = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        res.redirect("/login?message=Server error. Please try again.&type=error");
+        return res.redirect("/login?message=Server error. Please try again.&type=error");
     }
 };
+
 
 const save_user = async (req, res) => {
     const user_data = {
@@ -122,10 +147,10 @@ const updateCustodianStatus = async (req, res) => {
         await models.Custodian.update({ status }, { where: { user_id } });
 
         // balik dashboard
-        res.redirect('/dashboardAdmin');
+        res.redirect('/dashboardAdmin?message=Custodian Status Changed&type=success');
     } catch (error) {
         console.error('Error updating custodian status:', error);
-        res.status(500).send('Server Error');
+        res.redirect('/dashboardAdmin?message=Custodian Status Not Changed.&type=error');
     }
 };
 

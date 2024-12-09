@@ -73,7 +73,7 @@ const addTransaction = async (req, res) => {
             await models.Items.bulkCreate(items, { transaction });
 
             // Commit the transaction if everything is successful
-            res.redirect("/addTransaction?message=Success!");
+            res.redirect("/dashboardCustodian");
         });
     } catch (error) {
         console.error("Transaction Error:", error);
@@ -240,15 +240,23 @@ const generateReport = async (req, res) => {
     try {
         const userId = req.user.user_id;
 
+        // Find custodian data along with associated transactions and items
         const custodianData = await models.Custodian.findOne({
             where: { user_id: userId },
             include: [
                 {
-                    model: models.CashFund,
-                    required: true
-                },
-                {
-                    model: models.Transactions
+                    model: models.Transactions,
+                    include: [
+                        {
+                            model: models.Items,
+                            as: 'items'  // Include associated items
+                        },
+                        {
+                            model: models.Voucher,
+                            as: 'voucher'  // Include associated voucher
+                        }
+                    ],
+                    order: [['createdAt', 'ASC']]
                 }
             ]
         });
@@ -257,48 +265,49 @@ const generateReport = async (req, res) => {
             return res.status(404).send('Custodian not found.');
         }
 
-        const createdAtDate = custodianData.CashFund.createdAt;
-        const dateFormatted = createdAtDate.toISOString().split('T')[0];
+        const transactions = custodianData.Transactions || [];
+        const cashId = custodianData.cashF_id;
 
-        const sameDateRecords = await models.CashFund.findAll({
-            where: {
-                createdAt: {
-                    [Op.between]: [`${dateFormatted} 00:00:00`, `${dateFormatted} 23:59:59`]
-                }
-            }
+        let grandTotal = 0;
+
+        // Correctly calculate the report data
+        const reportData = transactions.map((tx) => {
+            const transactionTotal = parseFloat(tx.total) || 0;
+            grandTotal += transactionTotal;
+
+            // Safely retrieve item names with quantity
+            const itemNames = Array.isArray(tx.items)
+                ? tx.items.map(item => `${item.itemName} (x${item.itemQuantity})`).join(', ')
+                : 'No items';
+
+            return {
+                date: tx.createdAt,
+                items: itemNames,
+                total: transactionTotal,
+                voucherNo: tx.voucher ? tx.voucher.voucher_id : 'N/A'
+            };
         });
 
-        const reportSequence = sameDateRecords.length;
-        const reportNumber = `${dateFormatted.replace(/-/g, '')}-${String(reportSequence).padStart(3, '0')}`;
-        const cashId = custodianData.CashFund?.cashF_id;
-
-        const transactions = custodianData.Transactions || [];
-        const reportData = transactions.map((tx) => ({
-            date: tx.createdAt,
-            remainingFund: parseFloat(tx.total) || 0, // Ensure it's a valid number, default to 0
-            description: tx.description,
-            total: parseFloat(tx.total) || 0, // Ensure it's a valid number
-            voucherNo: tx.voucherNo || 'N/A',
-        }));
-
         res.render('custodian/report', {
-            initialFund: custodianData.CashFund.amount,
             reportData,
+            cashId,
             custodian: {
                 custodian_name: custodianData.custodian_name,
                 custodian_no: custodianData.custodian_no
             },
-            cashId,
-            reportNumber,
-            cashFund: {
-                createdAt: custodianData.CashFund.createdAt
-            }
+            reportNumber: `Report-${new Date().toISOString().split('T')[0]}`,
+            grandTotal
         });
+        
     } catch (error) {
         console.error('Error generating report:', error.message);
         res.status(500).send('Server error. Please try again later.');
     }
 };
+
+
+
+
 
 
 
