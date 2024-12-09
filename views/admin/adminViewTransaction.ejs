@@ -76,17 +76,45 @@
                         <th>Total</th>
                         <th>Purchaser</th>
                         <th>Employee ID</th>
-                        <th>Custodian</th> <!--the custodian who made the transaction-->
+                        <th>Custodian</th>
                         <th>Status</th>
                         <th>OR No.</th>
                         <th>Store Name</th>
-                        <th>Refund</th> 
-                        <th>Action</th> <!--where buttons to approve-->
+                        <th>Refund</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    <% transactions.forEach(transaction => { %>
+                        <tr>
+                            <td><%= transaction.transaction_id %></td>
+                            <td><%= transaction.createdAt %></td>
+                            <td><%= transaction.description %></td>
+                            <td><%= transaction.total %></td>
+                            <td><%= transaction.purchaser %></td>
+                            <td><%= transaction.employeeId %></td>
+                            <td><%= transaction.custodianName %></td>
+                            <td><%= transaction.status %></td>
+                            <td><%= transaction.oRNo %></td>
+                            <td><%= transaction.storeName %></td>
+                            <td><%= transaction.personalContri %></td>
+                            <td>
+                                <% if (transaction.status === 'pending') { %>
+                                    <form action="/approveTransaction/<%= transaction.transaction_id %>" method="post" style="display:inline;">
+                                        <button class="changeStatus">Approve</button>
+                                    </form>
+                                    <form action="/rejectTransaction/<%= transaction.transaction_id %>" method="post" style="display:inline;">
+                                        <button class="changeStatus">Reject</button>
+                                    </form>
+                                <% } else { %>
+                                    <span>Processed</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
                 </tbody>
             </table>
-        </div>        
+        </div>            
     </div>
 
     <script>

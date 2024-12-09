@@ -365,6 +365,7 @@ body {
 a {
     text-decoration: none;
     text-transform: uppercase;
+    color: white;
 }
 
 .admin {
@@ -428,7 +429,7 @@ a {
 
 button {
     margin-top: 10px;
-    background-color: #007BFF;
+    background-color: #298a2e;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -439,4 +440,16 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+.statusBut {
+    background-color: green; /* Default color for active */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.statusBut.deactivated {
+    background-color: red; /* Color for deactivated */
 }

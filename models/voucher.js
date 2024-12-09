@@ -41,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
   Voucher.associate = (models) => {
     Voucher.belongsTo(models.Transactions, { foreignKey: 'transaction_id' });
     Voucher.belongsTo(models.User, { foreignKey: 'user_id' });
+    
   };
 
   return Voucher;

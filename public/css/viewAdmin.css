@@ -209,6 +209,26 @@ body {
     color: #298a2e;
 }
 
+.changeStatus{
+    width: 150px;
+    margin-top: 10px; /* Space between buttons */
+    padding: 15px 50px; /* Padding inside buttons */
+    border-radius: 4px; /* Rounded button corners */
+    background-color: #298a2e; /* Bootstrap primary color */
+    color: white; /* White text for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background change */
+}
+
+.changeStatus:hover {
+    background-color: #298a2e; /* Darker shade on hover */
+}
+
+.changeStatus a {
+    text-decoration: none;
+    color: white;
+}
+
 .dashboard-header form {
     display: flex;
     align-items: center;
@@ -347,4 +367,12 @@ input {
         width: 100%;
         z-index: 1;
     }
+}
+
+thead{
+    justify-items: center;
+}
+
+th{
+    justify-items: center;
 }

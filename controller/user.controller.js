@@ -2,7 +2,8 @@ const models = require('../models');
 const sequelize = models.sequelize; 
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const { Custodian, CashFund } = require('../models');  // Import the models
+const { Custodian, CashFund, Transactions } = require('../models');  // Import the models
+
 
 const login_view = (req, res) => {
     const message = req.query.message || ""; 
@@ -41,7 +42,7 @@ const login_user = async (req, res) => {
         // find user
         const result = await models.User.findOne({ where: { username: user_data.username } });
         if (!result) {
-            return res.render("login", { message: "User not found" });
+            return res.redirect("/login?message=User not found&type=error");
         }
 
         // hashing passwords, use bcrypt to compare
@@ -69,11 +70,11 @@ const login_user = async (req, res) => {
             }
 
         } else {
-            return res.render("login", { message: "Invalid password / user does not exist!" });
+            return res.redirect("/login?message=Invalid password&type=error");
         }
     } catch (error) {
         console.log(error);
-        res.render("login", { message: "Server error. Please try again." });
+        res.redirect("/login?message=Server error. Please try again.&type=error");
     }
 };
 
@@ -103,11 +104,11 @@ const save_user = async (req, res) => {
             }
 
             // Commit transaction and redirect
-            res.redirect("/login?message=Success!");
+            res.redirect("/login?message=Sign up successful&type=success");
         });
     } catch (error) {
         console.error("Transaction Error:", error);
-        res.redirect("/login?message=ServerError!");
+        res.redirect("/login?message=Failed to sign up. Please try again.&type=error");
     }
 };
 
@@ -130,33 +131,52 @@ const updateCustodianStatus = async (req, res) => {
 
 const custoDash = async (req, res) => {
     try {
-        const userId = req.user.user_id;  // Assuming req.user contains the logged-in user's info
+        const userId = req.user.user_id; // Extract user ID from authenticated user
         const custodian = await Custodian.findOne({
             where: { user_id: userId },
-            include: {
-                model: CashFund,
-                attributes: ['amount']
-            }
+            include: [
+                {
+                    model: CashFund,
+                    attributes: ['amount']
+                },
+                {
+                    model: Transactions,
+                    attributes: [
+                        'transaction_id',
+                        'description',
+                        'createdAt',
+                        'total',
+                        'purchaser',
+                        'employeeId',
+                        'custodianName',
+                        'status',
+                        'oRNo',
+                        'storeName',
+                        'personalContri'
+                    ]
+                }
+            ]
+            
         });
 
-        // Fetch all transactions for the custodian using user_id
-        const transactions = await models.Transaction.findAll({
-            where: { user_id: userId },  // Filtering transactions by user_id (custodian's user_id)
-            attributes: ['transaction_id', 'description', 'oRNo', 'amountGiven', 'custodianName', 'receiptImg', 'purchaser', 'employeeId', 'personalContri', 'storeName', 'total', 'status']
-        });
+        // If no custodian is found
+        if (!custodian) {
+            return res.status(404).send('Custodian not found');
+        }
 
-        console.log('Fetched Custodian:', custodian);
-        console.log('CashFund Amount:', custodian.CashFund ? custodian.CashFund.amount : 'N/A');
+        // Pass data to the EJS template
+        const cashFund = custodian.CashFund || { amount: '0.00' }; // Default if no cash fund
+        const transactions = custodian.Transactions || [];
 
-        // Pass the CashFund amount to the view
-        res.render('custodian/dashboardCustodian', { 
-            cashFund: custodian.CashFund ? custodian.CashFund : { amount: 'N/A' }  // Pass full CashFund or default
-        });
+        const showNotification = cashFund && cashFund.amount === '0.00';
+
+        res.render('custodian/dashboardCustodian', { cashFund, transactions, showNotification });
     } catch (error) {
         console.error('Error fetching custodian data:', error);
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 
 const logout = (req, res) => {

@@ -341,3 +341,45 @@ body {
     font-size: 1.2em;
     transition: all 1s;
 }
+
+.vouch {
+    width: 200px;
+    margin-top: 10px; /* Space between buttons */
+    padding: 15px 50px; /* Padding inside buttons */
+    border-radius: 4px; /* Rounded button corners */
+    background-color: #298a2e; /* Bootstrap primary color */
+    color: white; /* White text for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background change */
+}
+
+.vouch > a{
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.disabled-row {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.notification {
+    background-color: #ffcccc; /* Light red background */
+    border: 1px solid #ff0000; /* Red border */
+    color: #900; /* Dark red text */
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.notification i {
+    font-size: 18px;
+}

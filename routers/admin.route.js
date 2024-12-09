@@ -22,9 +22,9 @@ router.get("/updateCashF", auth.check_user_auth, role.check_admin_role, adminCon
 router.post('/update-cashfund', auth.check_user_auth, adminController.updateCashFund);
 
 
-router.get("/admin-ViewTransactions", auth.check_user_auth, role.check_admin_role, (req, res) => {
-    res.render("admin/adminViewTransaction")
-})
+router.get('/admin-ViewTransactions', auth.check_user_auth, adminController.getAdminTransactions);
+router.post('/approveTransaction/:transaction_id', auth.check_user_auth, adminController.approveTransaction);
+router.post('/rejectTransaction/:transaction_id', auth.check_user_auth, adminController.rejectTransaction);
 
 router.get("/logout", auth.check_user_auth, userController.logout)
 

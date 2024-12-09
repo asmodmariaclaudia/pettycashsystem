@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <title>Login & SignUp</title>
 </head>
 <body>
-    <div class="login-container">
-        <div class="green-box">
-            <h2>Welcome to our Petty Cash Websystem</h2>
-            <img src="images/niaLogo.png" alt="NIA Logo" class="logo">
-            <p>Our system aims to help your business manage and track small expenses.</p><br>
-            <p>©2024 Petty Cash System</p>
-        </div>
-        
-        <div class="white-box">
+    
+    <section class="side">
+        <img src="images/niaLogo.png" alt="NIA logo" class="logo">
+        <h2>Welcome to our Petty Cash System!</h2>
+        <h4>Our system aims to help your business manage and track small expenses</h4>
+        <p>©2024 Petty Cash System</p>
+    </section>
+
+    <section class="main">
+        <div class="login-container">
             <div class="tab-header">
                 <div class="active">Login</div>
-                <div>Sign Up</div>
+                <div id="signUpTab">Sign Up</div>
             </div>
-            
 
             <div class="tab-content">
+                <!-- Login Tab -->
                 <div class="tab-body active">
                     <form action="/login-user" method="post">
                         <div class="form-element">
@@ -36,22 +37,18 @@
                             <i class="fas fa-eye"></i>
                         </div>
 
-                        
                         <button type="submit">Login</button>
                     </form>
-
+                    <div id="toast" class="toast hidden"></div>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
                     <br>
-
-                    <div class="message">
-                        <% if(message) { %>
-                            <h4><%= message%></h4>
-                        <%}%>
-                    </div>
                 </div>
 
+                <!-- Sign Up Tab -->
                 <div class="tab-body">
                     <form action="/register-user" method="post">
-                        <div class="form-element" >
+                        <div class="form-element">
                             <input name="username_data" type="text" placeholder="Username" required>
                             <i class="fas fa-user"></i>
                         </div>
@@ -59,39 +56,119 @@
                             <input name="password_data" type="password" placeholder="Password" required>
                             <i class="fas fa-eye"></i>
                         </div>
-                        <button type="submit">Sign Up</button>
+                        <button type="submit" id="signUp">Sign Up</button>
                     </form>
                     <h3 class="h3Note">Admin sign up only!</h3>
-                    <div>
-                        <% if(message) { %>
-                            <h4><%= message%></h4>
-                        <%}%>
-                    </div>
+                    
+                    <div id="toast" class="toast hidden"></div>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Passkey Modal -->
+    <div id="passkeyModal" class="modal">
+        <div class="modal-content">
+            <h3>Enter Passkey</h3>
+            <input type="password" id="passkeyInput" placeholder="Passkey">
+            <button id="validatePasskey">Submit</button>
+            <button id="cancelModal">Cancel</button>
         </div>
     </div>
 
     <script>
+        // Display toast notification
+        const showToast = (message, type) => {
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                backgroundColor: type === "success" ? "green" : "red",
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+            }).showToast();
+        };
+
+        // Trigger toast notification if message is available
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get("message");
+        const type = urlParams.get("type"); // e.g., "success" or "error"
+        if (message) {
+            showToast(message, type);
+        }
+    </script>
+    
+
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
-    let tabPanes = document.querySelectorAll(".tab-header > div");
-    let tabBodies = document.querySelectorAll(".tab-content .tab-body");
+            const tabPanes = document.querySelectorAll(".tab-header > div");
+            const tabBodies = document.querySelectorAll(".tab-content .tab-body");
+            const signUpTab = document.getElementById("signUpTab");
+            const signUpForm = tabBodies[1];
 
-    tabPanes.forEach((tab, index) => {
-        tab.addEventListener("click", function () {
-            document.querySelector(".tab-header .active").classList.remove("active");
-            document.querySelector(".tab-content .tab-body.active").classList.remove("active");
+            const modal = document.getElementById("passkeyModal");
+            const passkeyInput = document.getElementById("passkeyInput");
+            const validatePasskeyButton = document.getElementById("validatePasskey");
+            const cancelModalButton = document.getElementById("cancelModal");
 
-         
-            tab.classList.add("active");
-            tabBodies[index].classList.add("active");
+            const validPasskey = "adminPass"; // Replace with your secure passkey
+
+            // Prevent access to sign-up form initially
+            signUpForm.style.display = "none";
+
+            // Handle Sign-Up tab click
+            signUpTab.addEventListener("click", function () {
+                modal.style.display = "block";
+            });
+
+            // Validate Passkey
+            validatePasskeyButton.addEventListener("click", function () {
+                if (passkeyInput.value === validPasskey) {
+                    modal.style.display = "none";
+                    signUpForm.style.display = "block";
+                    signUpTab.classList.add("active");
+                    tabBodies[0].classList.remove("active");
+                } else {
+                    alert("Incorrect Passkey! Access denied.");
+                    passkeyInput.value = "";
+                }
+            });
+
+            // Cancel Modal
+            cancelModalButton.addEventListener("click", function () {
+                modal.style.display = "none";
+                passkeyInput.value = "";
+            });
+
+            // Close modal if user clicks outside it
+            window.addEventListener("click", function (event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
         });
-    });
-});
+    </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let tabPanes = document.querySelectorAll(".tab-header > div");
+            let tabBodies = document.querySelectorAll(".tab-content .tab-body");
+    
+            tabPanes.forEach((tab, index) => {
+                tab.addEventListener("click", function () {
+                    // Remove the 'active' class from the currently active tab and body
+                    document.querySelector(".tab-header .active").classList.remove("active");
+                    document.querySelector(".tab-content .tab-body.active").classList.remove("active");
+    
+                    // Add the 'active' class to the clicked tab and corresponding content
+                    tab.classList.add("active");
+                    tabBodies[index].classList.add("active");
+                });
+            });
+        });
     </script>
 </body>
 </html>
-
-
-

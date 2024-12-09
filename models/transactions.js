@@ -69,15 +69,25 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      approvedBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Admin', // Ensure this matches your Users table name
+          key: 'user_id',
+        },
+      }
     });
   
     Transactions.associate = (models) => {
       Transactions.belongsTo(models.User, { foreignKey: 'user_id' });
+      Transactions.belongsTo(models.Custodian, { foreignKey: 'user_id' });
 
-      Transactions.hasMany(models.Items, { foreignKey: 'transaction_id' });
+      Transactions.hasMany(models.Items, { foreignKey: 'transaction_id', as: 'items' });
 
-      Transactions.hasOne(models.Voucher, { foreignKey: 'transaction_id' });
+      Transactions.hasOne(models.Voucher, { foreignKey: 'transaction_id', as: 'voucher' });
 
+      Transactions.belongsTo(models.Admin, { foreignKey: 'approvedBy', as: 'approver' });
     };
   
     return Transactions;

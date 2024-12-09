@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custodian Add Transaction</title>
-    <link rel="stylesheet" href="css/printVoucher.css">
+    <link rel="stylesheet" href="/css/printVouch.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 </head>
@@ -42,7 +42,7 @@
                 <span>Petty Cash System</span>
             </div>
             <div class="admin">
-                <span>Admin</span>
+                <span>Hello, Custodian!</span>
             </div>
         </div>
 
@@ -54,43 +54,47 @@
                 <div class="transaction-form">
                     <div class="form-group">
                         <label for="transactionId">Transaction ID:</label>
-                        <input type="text" id="transactionId" readonly>
+                        <input type="text" id="transactionId" value="<%= transaction.transaction_id %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="voucherId">Voucher ID:</label>
+                        <input type="text" id="voucherId" value="<%= voucher ? voucher.voucher_id : '' %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="transactionDate">Date:</label>
-                        <input type="text" id="transactionDate" readonly>
+                        <input type="text" id="transactionDate" value="<%= transaction.createdAt %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="amountGiven">Amount Given:</label>
-                        <input type="text" id="amountGiven" readonly>
+                        <input type="text" id="amountGiven" value="<%= transaction.total %>" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="orNumber">OR No.:</label>
-                        <input type="text" id="orNumber" readonly>
+                        <label for="oRNumber">O.R. Number:</label>
+                        <input type="text" id="orNumber" value="<%= transaction.oRNo %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="description">Description:</label>
-                        <input type="text" id="description" readonly>
+                        <input type="text" id="description" value="<%= transaction.description %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="total">Total:</label>
-                        <input type="text" id="total" readonly>
+                        <input type="text" id="total" value="<%= transaction.total %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="purchaser">Purchaser:</label>
-                        <input type="text" id="purchaser" readonly>
+                        <input type="text" id="purchaser" value="<%= transaction.purchaser %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="employeeId">Employee ID:</label>
-                        <input type="text" id="employeeId" readonly>
+                        <input type="text" id="employeeID" value="<%= transaction.employeeId %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="personalContributions">Personal Contributions:</label>
-                        <input type="text" id="personalContributions" readonly>
+                        <input type="text" id="personalContributions" value="<%= transaction.personalContri %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="storeName">Store Name:</label>
-                        <input type="text" id="storeName" readonly>
+                        <input type="text" id="storeName" value="<%= transaction.storeName %>" readonly>
                     </div>
                 </div>
             </div>
@@ -99,33 +103,74 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Items</th>
+                            <th>Item</th>
+                            <th>Quantity</th>
                             <th>Amount</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="empty-row">
-                            <td class="item-empty-cell"></td> <!-- Empty row for added items -->
-                            <td class="amount-empty-cell"></td> <!-- Empty row for added items -->
-                        </tr>
+                        <% let grandTotal = 0; %>
+            
+                        <% transaction.items.forEach(item => { %>
+                            <tr>
+                                <td><%= item.itemName %></td>
+                                <td><%= item.itemQuantity %></td>
+                                <td><%= parseFloat(item.itemAmount).toFixed(2) %></td>
+                                <td><%= parseFloat(item.rowTotal).toFixed(2) %></td>
+                            </tr>
+            
+                            <% grandTotal += parseFloat(item.rowTotal); %>
+                        <% }); %>
+            
+                        <!-- Grand Total Row -->
                         <tr class="total-row">
-                            <td colspan="2" class="total-cell">Total:</td>
+                            <td colspan="3" class="total-cell" style="text-align:right; font-weight: bold;">Grand Total:</td>
+                            <td><%= grandTotal.toFixed(2) %></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             
+            
         
             <div class="approvedBy-section">
                 <h3>APPROVED BY:</h3>
-                <p>Custodian Name</p>
-                <p>Custodian ID</p>
+                <% if (admin && admin.full_name) { %>
+                    <% if (admin.signature) { %>
+                        <img src="/images/<%= admin.signature %>" alt="Admin Signature" class="signature-img">
+                    <% } else { %>
+                        <p>No Signature Available</p>
+                    <% } %>
+                    <p class="adName"><strong><%= admin.full_name %></strong></p>
+                    <p>Immediate Supervisor</p>
+                <% } else { %>
+                    <p>No Admin Information Found</p>
+                <% } %>
             </div>
+            
+            <div class="approvedBy-section">
+                <h3>CUSTODIAN APPROVAL:</h3>
+                <% if (custodian) { %>
+                    <p class="cusName"><strong><%= custodian.custodian_name %></strong></p>
+                    <p><strong>Custodian Number:</strong> <%= custodian.custodian_no %></p>
+                <% } else { %>
+                    <p>No Custodian Info Found</p>
+                <% } %>
+            </div>
+            
+            
+            
         </div>
 
         <div class="receipt-container">
             <h3>Receipt</h3>
-            <img src="" alt="Generated Receipt" id="receiptImage">
+            <% if (transaction && transaction.receiptImg) { %>
+                <!-- Receipt Image stored in the public folder -->
+                <img src="/images/<%= transaction.receiptImg %>" alt="Generated Receipt" id="receiptImage" class="receipt-img">
+            <% } else { %>
+                <p>No Receipt Image Available</p>
+            <% } %>
         </div>
 
         <div class="action-buttons">
@@ -134,6 +179,37 @@
         </div>
 
     </div>
+
+    <script>
+        // Redirect to the dashboard when the cancel button is clicked
+        document.getElementById('cancelTransactionButton').addEventListener('click', function() {
+            window.location.href = 'dashboardCustodian'; // Update the path if necessary
+        });
+    </script>
+
+    <script>
+        // Print Button Functionality
+        document.getElementById('printTransactionButton').addEventListener('click', function() {
+            const printContents = document.querySelector('.transaction-container').innerHTML;
+            const originalContents = document.body.innerHTML;
+
+            const printWindow = window.open('', '', 'width=600,height=600');
+            printWindow.document.write('<html><head><title>Print Voucher</title>');
+            printWindow.document.write('<link rel="stylesheet" href="/css/toPrint.css">');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+
+            printWindow.onload = function() {
+                printWindow.print();
+                printWindow.onafterprint = function() {
+                    printWindow.close();
+                };
+            };
+        });
+
+    </script>
 
     <script>
        let toggle = document.querySelector('.toggle');
@@ -162,8 +238,6 @@
             }
         });
 
-
-        
     </script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
 * {
@@ -148,11 +147,27 @@ body {
     cursor: pointer;
 }
 
-.add-transaction-container {
+.transaction-container{
     padding: 20px;
     margin: 100px 20px;
     background-color: white;
     border-radius: 10px;
+}
+
+.voucher-title {
+    text-align: center; /* Center the title */
+    padding: 30px 30px 20px;
+    font-size: 24px; /* Title size */
+    color: #298a2e;
+}
+.print-voucher-container {
+    max-width: 800px; /* Set a maximum width for the container */
+    margin: auto; /* Center the container */
+    padding: 20px; /* Add padding for internal spacing */
+    border: 1px solid #ccc; /* Border around the container */
+    border-radius: 8px; /* Rounded corners */
+    background-color: white; /* Light background color */
+    box-sizing: border-box;
 }
 
 .transaction-title {
@@ -160,7 +175,7 @@ body {
     padding: 20px;
     margin-bottom: 20px; /* Space below the title */
     font-size: 24px; /* Title size */
-    color: #298a2e;
+    color: black;
 }
 
 .transaction-content {
@@ -169,21 +184,17 @@ body {
     margin-bottom: 20px;
 }
 
-.transaction-form, .receipts-section {
-    flex: 1; /* Allow sections to grow equally */
-    margin-right: 40px; /* Space between the two sections */
-}
-
 .transaction-form {
     display: flex;
     flex-direction: column; /* Stack form groups vertically */
     gap: 10px; /* Spacing between form groups */
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .form-group {
     display: flex; /* Use flexbox for label and input */
     align-items: center; /* Center items vertically */
-    padding: 1%;
 }
 
 .form-group label {
@@ -195,20 +206,15 @@ body {
 }
 
 .form-group input {
-    flex: 1; /* Make input take remaining space */
-    width: 350px;
-    padding: 15px; /* Padding for inputs */
-    border: 1px solid #ccc; /* Border for inputs */
-    background-color: #f1f1f1;
-    border-radius: 4px; /* Rounded corners for inputs */
+    width: 300px;
+    padding: 10px; /* Padding for inputs */
+    border-bottom: 1px solid black;
 }
 
-
-.receipts-section {
-    display: flex;
-    flex-direction: column; /* Stack receipts vertically */
-    width: 80px;
+.transaction-form input[readonly] {
+    background-color: transparent; /* Ensure read-only inputs have no background */
 }
+
 
 .uploaded-receipts {
     margin-top: 10px; /* Space above uploaded receipts */
@@ -248,26 +254,26 @@ body {
 
 .total-cell {
     text-align: left; /* Align total text to the left */
-    background-color: rgb(146, 240, 118);
 }
 
-.add-item-section {
-    display: flex; /* Use flexbox for layout */
-    margin: 20px; /* Space above this section */
+.approvedBy-section {
+    text-align: center;
+    margin-top: 30px; /* Adjust for spacing as needed */
 }
 
-.add-item-section input {
-    margin-right: 10px; /* Space between inputs */
-    flex: 1; /* Allow inputs to grow equally */
-    background-color: #dedcdc;
-    padding: 15px;
+.approvedBy-section h3,
+.approvedBy-section p {
+    margin: 5px 0; /* Adjust for spacing between lines */
+}
+
+.approvedBy-section h3 {
+    margin-bottom: 40px;
 }
 #addItemButton {
-    width: 150px;
+    width: 120px;
     font-weight: bold;
     margin-left: 20px;
     background-color: #d3ffd6;
-    padding: 20px;
 }
 .action-buttons {
     display: flex; /* Use flexbox for button layout */
@@ -277,9 +283,9 @@ body {
 }
 
 .action-buttons button {
-    width: 250px;
     margin-left: 10px; /* Space between buttons */
     padding: 15px 50px; /* Padding inside buttons */
+    border: none; /* No border */
     border-radius: 4px; /* Rounded button corners */
     background-color: #298a2e; /* Bootstrap primary color */
     color: white; /* White text for buttons */
@@ -288,7 +294,59 @@ body {
 }
 
 .action-buttons button:hover {
-    background-color: #298a2e; /* Darker shade on hover */
+    background-color: #1f6e23; /* Darker shade on hover */
+}
+
+.receipt-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px; /* Adjust as needed */
+}
+
+.receipt-container h3 {
+    font-weight: bold;
+    margin: 40px 20px 10px;
+}
+
+.receipt-container img {
+    width: 500px; /* Fixed width */
+    height: 500px; /* Fixed height */
+    object-fit: cover; /* Ensures the image is contained without distortion */
+    border: 1px solid #ccc; /* Optional: border for better visibility */
+}
+
+.signature-img {
+    max-width: 200px;
+    height: auto;
+    margin-top: 10px;
+    padding: 5px;
+    background: #f9f9f9;
+    display: block;
+}
+
+img {
+    object-fit: cover;
+    display: inline-block;
+}
+
+.approvedBy-section {
+    justify-items: center;
+    padding: 10px;
+    border-top: 2px solid #007BFF;
+    margin-top: 20px;
+}
+
+.approvedBy-section h3 {
+    color: #007BFF;
+    font-weight: bold;
+    text-align: left;
+}
+
+p {
+    font-size: 14px;
+    margin: 5px;
+    font-weight: 500;
 }
 
 
@@ -332,94 +390,57 @@ body {
         z-index: 1;
     }
 
-    .transaction-content {
-        flex-direction: column; /* Stack the sections vertically */
-        gap: 20px; /* Add space between the stacked sections */
-        align-items: center; /* Center the content */
+    .print-voucher-container {
+        transform-origin: top left; /* Anchor scaling to top left corner */
+        width: auto; /* Reset width to auto */
+        height: auto; /* Reset height to auto */
+        overflow: hidden; /* Hide any overflow caused by scaling */
     }
 
-    .transaction-form, .receipts-section {
-        width: 100%; /* Full width for smaller screens */
-        margin-right: 0; /* Remove right margin */
+    .transaction-title {
+        font-size: 20px;
     }
-
-    .form-group {
-        flex-direction: column; /* Stack label and input vertically */
-        align-items: flex-start; /* Align label and input to the start */
+    .form-group label, .items-table table {
+        margin-left: 0;
     }
 
     .items-table table {
         width: 100%;
-        margin-left: 0;
     }
 
-    .form-group label {
-        width: 100%; /* Full width for labels */
-        margin-bottom: 5px; /* Add spacing below label */
-        margin-left: 0;
+    .receipt-container img {
+        width: 300px; /* Fixed width */
+        height: 300px; /* Fixed height */
     }
 
-    .form-group input {
-        width: 100%; /* Full width for inputs */
+    .print-voucher-container .form-group label,
+    .print-voucher-container .form-group input {
+        width: 175px;
+        font-size: 14px;
     }
 
-    .add-item-section {
-        width: 100%;
-        margin-left: 0;
-        flex-direction: column;
-        gap: 10px;
+    .transaction-form {
+        gap: 5px; 
     }
     
-    #addItemButton {
-        width: 100%; /* Set button to full width */
-        flex-direction: column; /* Stack items inside the button */
-        margin-left: 0;
-        padding: 15px;
-    }
-    
-    .action-buttons {
-        display: flex; /* Enable flexbox layout */
-        flex-direction: row; /* Align buttons side by side */
-        align-items: center; /* Center-align buttons */
-        width: 100%; /* Ensure action buttons take full width */
-    }
-    
-    .action-buttons button {
-        width: 100%; /* Set button width to 100% */
-        margin: 5px; /* Remove left margin */
-        margin-bottom: 10px; /* Space between stacked buttons */
-        padding: 15px;
-    }
+
 }
 
-.receipts-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px auto; /* Center the section horizontally */
-    text-align: center;
-    width: 100%; /* Ensure it occupies the full width */
-    max-width: 400px; /* Optional: Limit maximum width for better alignment */
+.cusName{
+    font-size: larger;
+    text-decoration: underline;
 }
 
-.receipts-section input[type="file"] {
-    margin-top: 10px;
+.adName{
+    font-size: larger;
 }
 
-.uploaded-receipts {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #555;
-    background: #f9f9f9;
-    padding: 10px;
-    border: 1px dashed #ccc;
-    border-radius: 5px;
-    width: 100%;
-    max-height: 150px;
-    overflow-y: auto;
+.date{
+    font-size: larger;
+    text-decoration: underline;
 }
 
-.uploaded-receipts span {
-    display: block;
-    margin-bottom: 5px;
-}
+
+
+
+

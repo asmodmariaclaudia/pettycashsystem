@@ -51,6 +51,12 @@
                 <div class="cash-fund-container">
                     <label for="cashFundDisplay">Cash Fund:</label>
                     <input type="text" id="cashFundDisplay" value="<%= cashFund.amount === '0.00' ? 'No Funds Available' : cashFund.amount %>" readonly>
+                    <% if (showNotification) { %>
+                        <div class="notification" id="cashFundNotification">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Cash Fund is empty! Please request replenishment.
+                        </div>
+                    <% } %>
                 </div>
             </div>
 
@@ -74,7 +80,6 @@
                             <th>Total</th>
                             <th>Purchaser</th>
                             <th>Employee ID</th>
-                            <th>Custodian</th> <!--the custodian who made the transaction-->
                             <th>Status</th>
                             <th>OR No.</th>
                             <th>Store Name</th>
@@ -84,31 +89,62 @@
                     </thead>
                     <tbody>
                         <% transactions.forEach(transaction => { %>
-                            <tr>
+                            <tr class="<%= transaction.status === 'approved' ? 'clickable-row' : 'disabled-row' %>" 
+                                data-id="<%= transaction.transaction_id %>">
                                 <td><%= transaction.transaction_id %></td>
+                                <td><%= transaction.createdAt %></td>
                                 <td><%= transaction.description %></td>
-                                <td><%= transaction.amountGiven %></td>
-                                <td><%= transaction.custodianName %></td>
-                                <td><img src="<%= transaction.receiptImg %>" alt="Receipt" class="receipt-img" /></td>
+                                <td><%= transaction.total %></td>
                                 <td><%= transaction.purchaser %></td>
                                 <td><%= transaction.employeeId %></td>
-                                <td><%= transaction.personalContri %></td>
-                                <td><%= transaction.storeName %></td>
-                                <td><%= transaction.total %></td>
                                 <td><%= transaction.status %></td>
+                                <td><%= transaction.oRNo %></td>
+                                <td><%= transaction.storeName %></td>
+                                <td><%= transaction.personalContri %></td>
                                 <td>
                                     <% if (transaction.status === 'approved') { %>
-                                        <a href="/createVoucher/<%= transaction.transaction_id %>">Create Voucher</a>
+                                        <button class="vouch">
+                                            <a href="/printVoucher/<%= transaction.transaction_id %>">Create Voucher</a>
+                                        </button>
                                     <% } %>
                                 </td>
                             </tr>
                         <% }) %>
                     </tbody>
                     
+                    
                 </table>
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('cashFundNotification').addEventListener('click', function() {
+            window.location.href = '/report';
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rows = document.querySelectorAll('.clickable-row');
+    
+            rows.forEach(row => {
+                row.addEventListener('click', function () {
+                    const transactionId = this.dataset.id; // Get the transaction ID from data-id
+                    window.location.href = `/updateTrans?transactionId=${transactionId}`; // Redirect with query parameter
+                });
+            });
+    
+            // Style and disable unapproved rows
+            const disabledRows = document.querySelectorAll('.disabled-row');
+            disabledRows.forEach(row => {
+                row.style.cursor = 'not-allowed';
+                row.style.opacity = '0.5';
+            });
+        });
+    </script>
+    
+    
     
 
     <!-- JavaScript -->

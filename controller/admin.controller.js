@@ -2,6 +2,7 @@ const { render } = require('ejs');
 const models = require('../models');
 const { Admin } = require('../models'); // Import Admin model from your models folder
 const sequelize = models.sequelize;
+const { Transactions } = require('../models');
 
 
 
@@ -70,47 +71,51 @@ const updateCashF_view = async (req, res) => {
                 attributes: ['username']
             }
         });
-        res.render("admin/updateCashF", { custodians });
+
+        const { message, type } = req.query;
+
+        res.render("admin/updateCashF", { custodians, message, type });
     } catch (error) {
         console.error("Error fetching custodians:", error);
-        res.render("admin/updateCashF", { custodians: [] });
+        res.render("admin/updateCashF", { custodians: [], message: "An error occurred while loading data.", type: "error" });
     }
 };
-
 
 const updateCashFund = async (req, res) => {
     const { custodian, newfund_data } = req.body;
 
     try {
-        // Step 1: Find the Custodian by custodian_no
         const custodianRecord = await models.Custodian.findOne({
             where: { custodian_no: custodian },
         });
 
         if (!custodianRecord) {
             console.log('Custodian record not found');
-            return res.redirect("/updateCashFund?message=CustodianNotFound");
+            return res.redirect("/updateCashF?message=Custodian record not found&type=error");
         }
 
-        // Step 2: Use the cashF_id from the Custodian to find the CashFund
         const cashFund = await models.CashFund.findOne({
             where: { cashF_id: custodianRecord.cashF_id },
         });
 
         if (!cashFund) {
             console.log('Cash fund record not found');
-            return res.redirect("/updateCashFund?message=FundNotFound");
+            return res.redirect("/updateCashF?message=Cash fund not found&type=error");
         }
 
-        // Step 3: Update the cash fund amount
+        if (parseFloat(cashFund.amount) !== 0.00) {
+            console.log('Cannot update cash fund; amount is not zero');
+            return res.redirect("/updateCashF?message=Cannot update. Fund amount must be zero.&type=error");
+        }
+
         cashFund.amount = parseFloat(newfund_data);
         await cashFund.save();
 
         console.log('Cash fund updated successfully');
-        res.redirect("/updateCashF?message=FundUpdated");
+        res.redirect("/updateCashF?message=Cash fund updated successfully&type=success");
     } catch (error) {
         console.error("Error updating cash fund:", error);
-        res.redirect("/updateCashF?message=ServerError");
+        res.redirect("/updateCashF?message=An error occurred while updating the cash fund.&type=error");
     }
 };
 
@@ -190,6 +195,82 @@ const update_admin = async (req, res) => {
     }
 };
 
+const getAdminTransactions = async (req, res) => {
+    try {
+        const transactions = await Transactions.findAll({
+            attributes: [
+              'transaction_id',
+              'description',
+              'oRNo',
+              'amountGiven',
+              'custodianName',
+              'receiptImg',
+              'purchaser',
+              'employeeId',
+              'personalContri',
+              'storeName',
+              'total',
+              'status',
+              'createdAt',
+            ]
+        });
+
+        // Render the 'adminViewTransactions' view and pass the transactions
+        res.render("admin/adminViewTransaction", { transactions });
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+
+// To handle approving the transaction
+const approveTransaction = async (req, res) => {
+    const { transaction_id } = req.params;
+    const adminId = req.user.user_id; // Assuming admin ID is stored in session
+
+    try {
+        const transaction = await models.Transactions.findByPk(transaction_id);
+
+        if (!transaction) {
+            return res.status(404).send('Transaction not found');
+        }
+
+        // Update transaction status and approvedBy field
+        transaction.status = 'approved';
+        transaction.approvedBy = adminId; // Assign the approver ID
+        await transaction.save();
+
+        res.redirect('/admin-ViewTransactions'); // Refresh view with updated data
+    } catch (error) {
+        console.error('Error approving transaction:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+// To handle rejecting the transaction
+const rejectTransaction = async (req, res) => {
+    const { transaction_id } = req.params;
+
+    try {
+        const transaction = await models.Transactions.findByPk(transaction_id);
+
+        if (!transaction) {
+            return res.status(404).send('Transaction not found');
+        }
+
+        // Update transaction status, leaving approvedBy null
+        transaction.status = 'rejected';
+        transaction.approvedBy = null; // Clear approver field in case of rejection
+        await transaction.save();
+
+        res.redirect('/admin-ViewTransactions'); // Refresh view with updated data
+    } catch (error) {
+        console.error('Error rejecting transaction:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 
 
@@ -201,5 +282,8 @@ module.exports = {
     updateCashF_view,
     updateCashFund,
     getCustodianData,
-    update_admin
+    update_admin,
+    getAdminTransactions,
+    approveTransaction,
+    rejectTransaction
 };

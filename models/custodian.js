@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     Custodian.associate = (models) => {
       Custodian.belongsTo(models.User, { foreignKey: 'user_id' });
       Custodian.belongsTo(models.CashFund, { foreignKey: 'cashF_id' });
+      Custodian.hasMany(models.Transactions, { foreignKey: 'user_id' }); // Link via user_id
   };
   
     return Custodian;

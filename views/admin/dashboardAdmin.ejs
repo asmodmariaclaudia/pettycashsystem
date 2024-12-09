@@ -107,10 +107,12 @@
                                     : '0.00' %>
                             </td>
                             <td>
-                                    <a href="/updateCustodianStatus/<%= custodian.user_id %>?status=<%= custodian.status === 'active' ? 'deactivated' : 'active' %>" 
-                                        class="status-link">
-                                        <%= custodian.status %>
-                                    </a>
+                                    <button class="statusBut" data-status="<%= custodian.status %>">
+                                        <a href="/updateCustodianStatus/<%= custodian.user_id %>?status=<%= custodian.status === 'active' ? 'deactivated' : 'active' %>" 
+                                            class="status-link">
+                                            <%= custodian.status %>
+                                        </a>
+                                    </button>
                                 </span>
                             </td>
                         </tr>
@@ -120,6 +122,20 @@
             </table>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const buttons = document.querySelectorAll(".statusBut");
+
+            buttons.forEach(button => {
+                const status = button.getAttribute("data-status");
+                if (status === "deactivated") {
+                    button.classList.add("deactivated");
+                }
+            });
+        });
+
+    </script>
 
     <script>
         // Get references to elements

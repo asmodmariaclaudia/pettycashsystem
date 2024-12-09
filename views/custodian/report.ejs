@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report on Paid Petty Cash Vouchers</title>
+    <link rel="stylesheet" href="css/report.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body> 
+    <div class="sidebar">
+        <ul class="menu">
+            <li>
+                <a href="dashboardCustodian">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+             <li>
+                <a href="addTrans">
+                     <i class="fas fa-plus-circle"></i>
+                     <span>Add Transaction</span>
+                </a> 
+             </li>
+             <li class="logout">
+                <a href="logout">
+                     <i class="fas fa-sign-out-alt"></i>
+                     <span>Logout</span>
+                </a> 
+             </li>
+        </ul>
+    </div>
+
+     <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="title">
+                <span>Petty Cash System</span>
+            </div>
+            <div class="admin">
+                <span>Hello, Custodian!</span>
+            </div>
+        </div>
+
+        <div class="transaction-container">
+            <h2 class="voucher-title">Produce Report</h2>
+            <div class="print-voucher-container">
+                <div class="transaction-content">
+                    <div class="transaction-form">
+                        <h2>Report on Paid Petty Cash Vouchers</h2>
+                    </div>
+                </div>
+                <div class="transaction-form">
+                    <p>Period Covered: ______________________</p>
+                    <p>Report No: <%= reportNumber || 'N/A' %></p>
+                    <p class="date"><strong>Cash Fund: <%= cashId || 'N/A' %> </strong></p>
+                </div>
+            
+                <div class="items-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Remaining Petty Cash</th>
+                                <th>Items</th>
+                                <th>Total Cost</th>
+                                <th>Voucher No.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% reportData.forEach(record => { %>
+                                <tr>
+                                    <td><%= record.date.toISOString().split('T')[0] %></td>
+                                    <td>$<%= typeof record.remainingFund === 'number' ? record.remainingFund.toFixed(2) : '0.00' %></td>
+                                    <td><%= record.description %></td>
+                                    <td>$<%= typeof record.total === 'number' ? record.total.toFixed(2) : '0.00' %></td>
+                                    <td><%= record.voucherNo %></td>
+                                </tr>
+                            <% }) %>
+
+                        </tbody>
+                    </table>
+
+                    <h1>______________________________</h1>
+
+                        <div class="transaction-form">
+                            <br><br>
+                            <h3><strong>CERTIFICATION</strong></h3>
+                            <p>I hereby certify the correctness of the above information.</p>
+                            <br>
+                            <br>
+                            <p class="cusName"><strong><%= custodian.custodian_name %></strong></p>
+                            <p>Petty Cash Custodian</p>
+
+                            <br><br>
+
+                            <p class="date"> <strong><%= new Date().toLocaleDateString() %></strong> </p>
+                            <p>Date</p>
+                        </div>
+            </div>
+            
+            
+        
+            
+            
+            
+        </div>
+
+        <div class="action-buttons">
+            <button id="printTransactionButton">Print Report</button>
+            <button id="cancelTransactionButton">Cancel</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Redirect to the dashboard when the cancel button is clicked
+        document.getElementById('cancelTransactionButton').addEventListener('click', function() {
+            window.location.href = 'dashboardCustodian'; // Update the path if necessary
+        });
+    </script>
+
+    <script>
+        // Print Button Functionality
+        document.getElementById('printTransactionButton').addEventListener('click', function() {
+            const contents = document.querySelector('.transaction-container').innerHTML;
+            const printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Report</title>
+                    <link rel="stylesheet" href="/css/toPrint.css">
+                </head>
+                <body>${contents}</body>
+                </html>
+            `);
+
+            printWindow.document.close();
+            printWindow.onload = function() {
+                printWindow.print();
+                printWindow.onafterprint = printWindow.close;
+            };
+        });
+    </script>
+
+    <script>
+        // Print Button Functionality
+        document.getElementById('printTransactionButton').addEventListener('click', function() {
+            const printContents = document.querySelector('.transaction-container').innerHTML;
+            const originalContents = document.body.innerHTML;
+
+            const printWindow = window.open('', '', 'width=600,height=600');
+            printWindow.document.write('<html><head><title>Print Voucher</title>');
+            printWindow.document.write('<link rel="stylesheet" href="/css/toPrint.css">');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+
+            printWindow.onload = function() {
+                printWindow.print();
+                printWindow.onafterprint = function() {
+                    printWindow.close();
+                };
+            };
+        });
+
+    </script>
+
+    <script>
+       let toggle = document.querySelector('.toggle');
+        let sidebar = document.querySelector('.sidebar');
+        let main = document.querySelector('.main');
+
+       
+        if (localStorage.getItem('sidebarActive') === 'true') {
+            sidebar.classList.add('active'); 
+            main.classList.add('active');
+        }
+
+        toggle.onclick = function () {
+            sidebar.classList.toggle('active');
+            main.classList.toggle('active');
+          
+            localStorage.setItem('sidebarActive', sidebar.classList.contains('active'));
+        };
+    
+        const currentLocation = window.location.pathname;
+        const menuItems = document.querySelectorAll('.sidebar .menu li a');
+
+        menuItems.forEach(item => {
+            if (item.getAttribute('href') === currentLocation.split('/').pop()) {
+                item.parentElement.classList.add('active');
+            }
+        });
+
+    </script>
+</body>
+</html>

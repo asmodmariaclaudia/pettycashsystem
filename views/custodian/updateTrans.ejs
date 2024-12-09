@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custodian Add Transaction</title>
+    <link rel="stylesheet" href="css/addTrans.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body> 
+    <div class="sidebar">
+        <ul class="menu">
+            <li>
+                <a href="dashboardCustodian">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+             <li>
+                <a href="addTrans">
+                     <i class="fas fa-plus-circle"></i>
+                     <span>Add Transaction</span>
+                </a> 
+             </li>
+             <li class="logout">
+                <a href="logout">
+                     <i class="fas fa-sign-out-alt"></i>
+                     <span>Logout</span>
+                </a> 
+             </li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="title">
+                <span>Petty Cash System</span>
+            </div>
+            <div class="admin">
+                <span>Custodian</span>
+            </div>
+        </div>
+
+        <div class="add-transaction-container">
+            <h2 class="transaction-title">Update Transaction</h2>
+            <div class="transaction-content">
+
+                    <div class="transaction-form">
+                        <form action="/updateTransaction" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="transactionId" value="<%= transaction.transaction_id %>">
+
+                            <!-- Fields for additional data upon approval -->
+                            <div id="additionalFields">
+                                <div class="form-group">
+                                    <label for="orNumber">OR No.:</label>
+                                    <input type="text" id="orNumber" name="orNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label for="personalContributions">Personal Contributions:</label>
+                                    <input type="number" id="personalContributions" name="personalContributions">
+                                </div>
+                                <div class="form-group">
+                                    <label for="storeName">Store Name:</label>
+                                    <input type="text" id="storeName" name="storeName">
+                                </div>
+                                <div class="receipts-section">
+                                    <label for="receiptsUpload">Receipts:</label>
+                                    <input type="file" id="receiptsUpload" name="receiptsUpload" accept="image/*" required>
+                                    <div class="uploaded-receipts">
+                                        <!-- Uploaded receipts will be listed here -->
+                                    </div>
+                                </div>
+    
+                                <!-- Buttons for approved transaction -->
+                                <div id="approvedButtons" class="action-buttons">
+                                    <button id="submitAdditionalDetailsButton" type="submit">Submit Additional Details</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const fileInput = document.getElementById('receiptsUpload');
+                const uploadedReceiptsContainer = document.querySelector('.uploaded-receipts');
+        
+                fileInput.addEventListener('change', function () {
+                    uploadedReceiptsContainer.innerHTML = ''; // Clear previous images
+        
+                    if (fileInput.files.length === 0) {
+                        uploadedReceiptsContainer.innerHTML = '<span>No files selected</span>';
+                        return;
+                    }
+        
+                    Array.from(fileInput.files).forEach(file => {
+                        if (file.type.startsWith('image/')) { // Ensure it's an image file
+                            const reader = new FileReader();
+        
+                            reader.onload = function (event) {
+                                const img = document.createElement('img');
+                                img.src = event.target.result; // Set the image source
+                                img.alt = file.name; // Add alt text for accessibility
+                                img.style.width = '100px'; // Optional: Set image dimensions
+                                img.style.height = 'auto'; // Maintain aspect ratio
+                                img.style.margin = '5px'; // Add spacing between images
+        
+                                uploadedReceiptsContainer.appendChild(img);
+                            };
+        
+                            reader.readAsDataURL(file); // Read the file as a data URL
+                        } else {
+                            const fileSpan = document.createElement('span');
+                            fileSpan.textContent = `Unsupported file: ${file.name}`;
+                            uploadedReceiptsContainer.appendChild(fileSpan);
+                        }
+                    });
+                });
+            });
+        </script>
+        
+
+        <script>
+            const toggle = document.querySelector('.toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const main = document.querySelector('.main');
+
+            if (localStorage.getItem('sidebarActive') === 'true') {
+                sidebar.classList.add('active'); 
+                main.classList.add('active');
+            }
+
+            toggle.onclick = function () {
+                sidebar.classList.toggle('active');
+                main.classList.toggle('active');
+                localStorage.setItem('sidebarActive', sidebar.classList.contains('active'));
+            };
+
+            const currentLocation = window.location.pathname;
+            const menuItems = document.querySelectorAll('.sidebar .menu li a');
+            menuItems.forEach(item => {
+                if (item.getAttribute('href') === currentLocation.split('/').pop()) {
+                    item.parentElement.classList.add('active');
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

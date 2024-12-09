@@ -315,6 +315,40 @@ body {
     border: 1px solid #ccc; /* Optional: border for better visibility */
 }
 
+.signature-img {
+    max-width: 200px;
+    height: auto;
+    margin-top: 10px;
+    padding: 5px;
+    background: #f9f9f9;
+    display: block;
+}
+
+img {
+    object-fit: cover;
+    display: inline-block;
+}
+
+.approvedBy-section {
+    justify-items: center;
+    padding: 10px;
+    border-top: 2px solid #007BFF;
+    margin-top: 20px;
+}
+
+.approvedBy-section h3 {
+    color: #007BFF;
+    font-weight: bold;
+    text-align: left;
+}
+
+p {
+    font-size: 14px;
+    margin: 5px;
+    font-weight: 500;
+}
+
+
 
 @media (max-width: 768px) {
     .sidebar {
@@ -387,5 +421,19 @@ body {
     .transaction-form {
         gap: 5px; 
     }
+    
 
 }
+
+.cusName{
+    font-size: larger;
+}
+
+.adName{
+    font-size: larger;
+}
+
+
+
+
+

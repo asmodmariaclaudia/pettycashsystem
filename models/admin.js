@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
   // Define association only once
   Admin.associate = (models) => {
     Admin.belongsTo(models.User, { foreignKey: 'user_id' });
+    Admin.hasMany(models.Transactions, { foreignKey: 'approvedBy' , as: 'approver'});
   };
 
   return Admin;

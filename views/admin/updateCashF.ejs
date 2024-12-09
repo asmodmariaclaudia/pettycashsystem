@@ -30,7 +30,7 @@
                 </a> 
              </li>
              <li>
-                <a href="upadteCashF">
+                <a href="updateCashF">
                      <i class="fas fa-money-bill-wave"></i>
                      <span>Update Fund</span>
                 </a> 
@@ -56,6 +56,7 @@
                 <span>Admin</span>
             </div>
         </div>
+
 
         <div class="update-fund-container">
             <!-- <h2>Update Fund</h2> -->
@@ -86,6 +87,35 @@
                 
                 <button id="update-fund-btn">Update Cash Fund</button>
             </form>
+            <div id="toast" class="toast hidden"></div>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+            <script>
+                // Display toast notification
+                const showToast = (message, type) => {
+                    Toastify({
+                        text: message,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "right", // `left`, `center` or `right`
+                        backgroundColor: type === "success" ? "green" : "red",
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                    }).showToast();
+                };
+            
+                // Trigger toast notification if message is available
+                const urlParams = new URLSearchParams(window.location.search);
+                const message = urlParams.get("message");
+                const type = urlParams.get("type"); // "success" or "error"
+                if (message) {
+                    showToast(message, type);
+                }
+            </script>
+            
+            
 
             <script>
                 document.getElementById('custodian').addEventListener('change', async function () {
