@@ -311,7 +311,7 @@ body {
 .receipt-container img {
     width: 500px; /* Fixed width */
     height: 500px; /* Fixed height */
-    object-fit: cover; /* Ensures the image is contained without distortion */
+    object-fit: contain; /* Ensures the image is contained without distortion */
     border: 1px solid #ccc; /* Optional: border for better visibility */
 }
 
@@ -408,8 +408,8 @@ p {
     }
 
     .receipt-container img {
-        width: 300px; /* Fixed width */
-        height: 300px; /* Fixed height */
+        width: 200px; /* Fixed width */
+        height: 200px; /* Fixed height */
     }
 
     .print-voucher-container .form-group label,

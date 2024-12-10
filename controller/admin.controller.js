@@ -142,7 +142,16 @@ const updateCashFund = async (req, res) => {
         cashFund.amount = parseFloat(newfund_data);
         await cashFund.save();
 
-        console.log('Cash fund updated successfully');
+
+        // Create a new report
+        await models.Reports.create({
+            startDate: new Date(), // Set the current date as the report start date
+            pettyCashStart: newfund_data, // The new fund amount
+            totalAmount: 0.00, // Initial total amount is 0
+            custodian_id: custodianRecord.user_id, // Link to the custodian
+        });
+
+        console.log('Cash fund updated and new report created successfully');
         res.redirect("/updateCashF?message=Cash fund updated successfully&type=success");
     } catch (error) {
         console.error("Error updating cash fund:", error);

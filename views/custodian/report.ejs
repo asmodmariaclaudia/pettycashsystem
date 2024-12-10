@@ -54,10 +54,24 @@
                         <h2>Report on Paid Petty Cash Vouchers</h2>
                     </div>
                 </div>
+                <div class="filters">
+                    <h2>Report Navigation</h2>
+                    <nav>
+                        <% if (reportData && reportData.length > 0) { %>
+                            <% reportData.forEach((report) => { %>
+                                <a href="?report_id=<%= report.report_id %>">Report ID <%= report.report_id %></a>
+                            <% }); %>
+                        <% } else { %>
+                            <p>No reports available.</p>
+                        <% } %>
+                    </nav>
+                </div>
                 <div class="transaction-form">
-                    <p>Period Covered: ______________________</p>
+                    <h2>Report Details for ID: <%= reportId %></h2>
+                    <p>Period Covered: <%= month %></p>
                     <p>Report No: <%= reportNumber || 'N/A' %></p>
                     <p class="date"><strong>Cash Fund: <%= cashId || 'N/A' %> </strong></p>
+                    <p class="date"><strong>Start Amount: <%= startAmount || 'N/A' %></strong></p>
                 </div>
             
                 <div class="items-table">
@@ -65,35 +79,29 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
+                                <th>Petty Cash Voucher No.</th>
                                 <th>Items</th>
-                                <th>Total Cost</th>
-                                <th>Voucher No.</th>
+                                <th>Total Amount</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% reportData.forEach(record => { %>
+                            <% if (reportData && reportData.length > 0) { %>
+                                <% reportData.forEach(report => { %>
+                                    <tr>
+                                        <td><%= new Date(report.date).toLocaleDateString() %></td>
+                                        <td><%= report.voucherNo %></td>
+                                        <td><%= report.items %></td>
+                                        <td><%= report.total %></td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
                                 <tr>
-                                  <td><%= record.date.toISOString().split('T')[0] %></td>
-                                  <td>
-                                    <% if (Array.isArray(record.items)) { %>
-                                      <ul>
-                                        <% record.items.forEach(item => { %>
-                                          <li><%= item.itemName %> (Qty: <%= item.itemQuantity %>) - ₱<%= item.itemAmount %></li>
-                                        <% }); %>
-                                      </ul>
-                                    <% } else if (record.items) { %>
-                                      <!-- If it's not an array but still present -->
-                                      <p><%= JSON.stringify(record.items) %></p>
-                                    <% } else { %>
-                                      No items
-                                    <% } %>
-                                  </td>
-                                  <td>₱<%= record.total.toFixed(2) %></td>
-                                  <td><%= record.voucherNo %></td>
+                                    <td colspan="6">No report data available.</td>
                                 </tr>
-                              <% }); %>
-                              
+                            <% } %>
                         </tbody>
+                        
+                        
                     </table>
 
                     <div class="transaction-form1">

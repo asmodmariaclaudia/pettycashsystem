@@ -76,6 +76,14 @@ module.exports = (sequelize, DataTypes) => {
           model: 'Admin', // Ensure this matches your Users table name
           key: 'user_id',
         },
+      },
+      report_id: { // Add the foreign key here
+        type: DataTypes.INTEGER,
+        allowNull: true, // Allow null if a transaction might not belong to a report initially
+        references: {
+          model: 'Reports', // Reference to the Reports table
+          key: 'report_id',
+        },
       }
     });
   
@@ -88,6 +96,8 @@ module.exports = (sequelize, DataTypes) => {
       Transactions.hasOne(models.Voucher, { foreignKey: 'transaction_id', as: 'voucher' });
 
       Transactions.belongsTo(models.Admin, { foreignKey: 'approvedBy', as: 'approver' });
+
+      Transactions.belongsTo(models.Reports, { foreignKey: 'report_id', as: 'report' });
     };
   
     return Transactions;

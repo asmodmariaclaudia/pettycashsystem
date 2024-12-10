@@ -289,6 +289,7 @@ input {
 }
 
 .table-container {
+    max-height: 480px;
     overflow-y: auto;
     border: 1px solid #ddd;
     width: 100%;

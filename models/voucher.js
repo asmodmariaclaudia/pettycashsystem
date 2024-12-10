@@ -35,12 +35,21 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
+    report_id: { // Add foreign key for Reports
+      type: DataTypes.INTEGER,
+      allowNull: true, // Allow null if not all vouchers are associated with a report initially
+      references: {
+        model: 'Reports',
+        key: 'report_id',
+      },
+    },
   });
 
   // Define associations
   Voucher.associate = (models) => {
     Voucher.belongsTo(models.Transactions, { foreignKey: 'transaction_id' });
     Voucher.belongsTo(models.User, { foreignKey: 'user_id' });
+    Voucher.belongsTo(models.Reports, { foreignKey: 'report_id', as: 'report' }); // New association
     
   };
 

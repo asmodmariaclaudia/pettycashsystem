@@ -18,6 +18,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(10, 2), // Change as necessary for your needs
         allowNull: false,
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
     });
   
     CashFund.associate = (models) => {
