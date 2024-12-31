@@ -3,7 +3,7 @@ const sequelize = models.sequelize;
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const { Custodian, CashFund, Transactions } = require('../models');  // Import the models
-
+const { Sequelize } = require('sequelize');
 
 const login_view = (req, res) => {
     const message = req.query.message || ""; 
@@ -32,6 +32,7 @@ const dashboardAdmin_view = async (req, res) => {
                     attributes: ['amount'], // Fetching the cash fund amount
                 },
             ],
+            order: [[Sequelize.cast(Sequelize.col('custodian_no'), 'INTEGER'), 'ASC']],
         });
 
         const { message, type } = req.query;
@@ -154,15 +155,25 @@ const updateCustodianStatus = async (req, res) => {
     }
 };
 
+// Controller (dashboardCustodian)
 const custoDash = async (req, res) => {
     try {
-        const userId = req.user.user_id; // Extract user ID from authenticated user
+        const userId = req.user.user_id;
+
+        const custo = await models.Custodian.findOne({
+            where: { user_id: req.user.user_id },
+            include: {
+                model: models.User,
+                attributes: ['username'],
+            },
+        });
+
         const custodian = await Custodian.findOne({
             where: { user_id: userId },
             include: [
                 {
                     model: CashFund,
-                    attributes: ['amount']
+                    attributes: ['amount'],
                 },
                 {
                     model: Transactions,
@@ -177,30 +188,45 @@ const custoDash = async (req, res) => {
                         'status',
                         'oRNo',
                         'storeName',
-                        'personalContri'
-                    ]
-                }
-            ]
-            
+                        'personalContri',
+                    ],
+                },
+            ],
         });
 
-        // If no custodian is found
         if (!custodian) {
             return res.status(404).send('Custodian not found');
         }
 
-        // Pass data to the EJS template
-        const cashFund = custodian.CashFund || { amount: '0.00' }; // Default if no cash fund
+        const cashFund = custodian.CashFund || { amount: '0.00' };
         const transactions = custodian.Transactions || [];
+
+        // Determine if an update should be disabled
+        transactions.forEach((transaction) => {
+            transaction.isUpdateDisabled =
+                transaction.description &&
+                transaction.total &&
+                transaction.purchaser &&
+                transaction.employeeId &&
+                transaction.oRNo &&
+                transaction.storeName &&
+                transaction.personalContri;
+        });
 
         const showNotification = cashFund && cashFund.amount === '0.00';
 
-        res.render('custodian/dashboardCustodian', { cashFund, transactions, showNotification });
+        res.render('custodian/dashboardCustodian', {
+            cashFund,
+            transactions,
+            showNotification,
+            custodianFullName: custo ? custo.custodian_name : 'Custodian',
+        });
     } catch (error) {
         console.error('Error fetching custodian data:', error);
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 
 

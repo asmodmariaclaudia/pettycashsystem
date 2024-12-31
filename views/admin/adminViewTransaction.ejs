@@ -57,10 +57,11 @@
 
     <div class="dashboard-container">
         <div class="topdash">
-            <!-- <h2>Transaction</h2> -->
-            <div class="searchbar">
-                <input type="search" placeholder="Search here...">
-                <i class="fa fa-search"></i>
+            <div class="search_topdash">
+                <div class="searchbar">
+                    <input id="searchInput" class="inSearch" type="search" placeholder="Search here..." onkeyup="searchTable()">
+                    <i class="fa fa-search"></i>
+                </div>
             </div>
         </div>
 
@@ -139,6 +140,36 @@
             showToast(message, type);
         }
     </script>
+
+<script>
+    // Search Table Functionality
+    function searchTable() {
+        // Get the input value and convert it to lowercase
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+
+        // Get all rows in the table body
+        const rows = document.querySelectorAll('.custodian-table tbody tr');
+
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName('td');
+
+            let rowText = '';
+            // Loop through each cell in a row and combine text content
+            for (let i = 0; i < cells.length; i++) {
+                rowText += cells[i].textContent.toLowerCase() + ' ';
+            }
+
+            // Check if the search input matches any text in the row
+            if (rowText.includes(filter)) {
+                row.style.display = ''; // Show the row if it matches
+            } else {
+                row.style.display = 'none'; // Hide the row if it doesn't match
+            }
+        });
+}
+
+</script>
 
     <script>
         let toggle = document.querySelector('.toggle');

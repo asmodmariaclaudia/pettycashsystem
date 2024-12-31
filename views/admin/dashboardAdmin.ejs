@@ -64,9 +64,9 @@
         <div class="topdash">
             <!-- <h2>Dashboard</h2> -->
             <div class="searchbar">
-                <input class="inSearch" type="search" placeholder="Search here...">
+                <input id="searchInput" class="inSearch" type="search" placeholder="Search..." onkeyup="searchCustodians()">
                 <i class="fa fa-search"></i>
-            </div>
+            </div>            
         </div>
 
         <div id="admin-popup" class="popup">
@@ -91,7 +91,7 @@
                 <thead>
                     <tr>
                         <th>Custodian No.</th>
-                        <th>Custodian ID</th>
+                        <th>Custodian Name</th>
                         <th>Cash Fund</th>
                         <th>Status</th>
                     </tr>
@@ -112,7 +112,7 @@
                                             class="status-link">
                                             <%= custodian.status %>
                                         </a>
-                                    </button>
+                                    </button> 
                                 </span>
                             </td>
                         </tr>
@@ -160,6 +160,24 @@
             });
         });
 
+    </script>
+
+    <script>
+    function searchCustodians() {
+        let input = $('#searchInput').val().toLowerCase();
+        $('.custodian-table tbody tr').filter(function() {
+            let custodianNo = $(this).find('td:eq(0)').text().toLowerCase();
+            let custodianName = $(this).find('td:eq(1)').text().toLowerCase();
+            let cashFund = $(this).find('td:eq(2)').text().replace('₱', '').toLowerCase();
+    
+            // Check if the input matches any of these values
+            if (custodianNo.includes(input) || custodianName.includes(input) || cashFund.includes(input)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
     </script>
 
     <script>

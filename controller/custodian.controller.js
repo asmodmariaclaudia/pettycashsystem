@@ -4,9 +4,18 @@ const sequelize = models.sequelize;
 const { Transaction, Voucher, Admin, Items } = require('../models');
 const { Op } = require('sequelize');
 
+//render addTRans
 const addTrans = async (req, res) => {
     try {
         const userId = req.user.user_id; // Ensure `req.user` is set by the auth middleware
+
+        const custo = await models.Custodian.findOne({
+            where: { user_id: req.user.user_id }, // Assuming req.user.id contains the logged-in user's ID
+            include: {
+                model: models.User,
+                attributes: ['username'], // Include additional User attributes if needed
+            },
+        });
 
         // Fetch the custodian_name for the logged-in user
         const custodian = await models.Custodian.findOne({
@@ -18,13 +27,17 @@ const addTrans = async (req, res) => {
             return res.status(404).send('Custodian not found'); // Handle missing custodian gracefully
         }
 
+        const { message, type } = req.query;
+
         // Pass the custodian_name to the EJS template
         res.render('custodian/addTransactions', {
-            custodian_name: custodian.custodian_name,
+            custodian_name: custodian.custodian_name, custodianFullName: custo ? custo.custodian_name : "Custodian", message, type
         });
     } catch (error) {
-        console.error('Error fetching custodian:', error);
-        res.status(500).send('Server error');
+        console.error('Error fetching custodian:', error.message);
+        res.status(500).render('custodian/addTransaction', {
+            error: "Server error while loading the page.",
+        });
     }
 }
 
@@ -43,6 +56,20 @@ const addTransaction = async (req, res) => {
     };
 
     try {
+        // Check custodian's cash fund balance
+        const custodian = await models.Custodian.findOne({
+            where: { custodian_name: transactionData.custodianName },
+            include: [{ model: models.CashFund }],
+        });
+
+        if (!custodian || !custodian.CashFund || custodian.CashFund.balance <= 0) {
+            return res.render('custodian/addTransactions', {
+                custodian_name: custodian.custodian_name,
+                custodianFullName: custodian.custodian_name || "Custodian",
+                error: "Cannot proceed with the transaction. Cash fund is depleted.",
+            });
+        }
+
         // Start the transaction for consistency
         await sequelize.transaction(async (transaction) => {
             // Fetch the active report
@@ -58,6 +85,8 @@ const addTransaction = async (req, res) => {
             if (!activeReport) {
                 throw new Error('No active report found for this custodian.');
             }
+
+            const { error } = req.query;
 
             // Step 1: Create the transaction record
             const transactionRecord = await models.Transactions.create({
@@ -85,8 +114,8 @@ const addTransaction = async (req, res) => {
             res.redirect("/dashboardCustodian");
         });
     } catch (error) {
-        console.error("Transaction Error:", error);
-        res.redirect("/addTransaction?message=ServerError!");
+        console.error("Transaction Error:", error.message);
+        return res.redirect(`/addTransaction?error=${encodeURIComponent(error.message)}`);
     }
 };
 
@@ -94,6 +123,7 @@ const addTransaction = async (req, res) => {
 
 // Render Update Transaction Page
 const getUpdateTransaction = async (req, res) => {
+    
     const { transactionId } = req.query;
 
     if (!transactionId) {
@@ -110,7 +140,7 @@ const getUpdateTransaction = async (req, res) => {
         res.render('custodian/updateTrans', { transaction });
     } catch (error) {
         console.error('Error fetching transaction:', error);
-        res.status(500).send('An error occurred.');
+        res.status(500).send('An error occurred.'); 
     }
 };
 
@@ -194,6 +224,14 @@ const postUpdateTransaction = async (req, res) => {
 
 const getTransactionForVoucher = async (req, res) => {
     try {
+        const custo = await models.Custodian.findOne({
+            where: { user_id: req.user.user_id }, // Assuming req.user.id contains the logged-in user's ID
+            include: {
+                model: models.User,
+                attributes: ['username'], // Include additional User attributes if needed
+            },
+        });
+
         const transactionId = req.params.id;
 
         // Fetch the transaction with associated data
@@ -253,7 +291,8 @@ const getTransactionForVoucher = async (req, res) => {
                 full_name: adminName,
                 signature: adminSignature
             },
-            custodian: transaction.Custodian  // Pass the Custodian directly
+            custodian: transaction.Custodian,  // Pass the Custodian directly
+            custodianFullName: custo ? custo.custodian_name : "Custodian"
         });
 
         console.log('Admin Signature Path:', transaction.approver?.signature);
@@ -266,71 +305,53 @@ const getTransactionForVoucher = async (req, res) => {
 
 const generateReport = async (req, res) => {
     try {
-        const userId = req.user.user_id;
-        const reportId = req.query.report_id;
+        const userId = req.user.user_id; // Extract user ID from the authenticated request
+        const custo = await models.Custodian.findOne({
+            where: { user_id: req.user.user_id }, // Assuming req.user.id contains the logged-in user's ID
+            include: {
+                model: models.User,
+                attributes: ['username'], // Include additional User attributes if needed
+            },
+        });
+        const reportId = req.query.report_id; // Get the report_id from the query string (optional)
 
-        // Find custodian data along with associated transactions, items, and vouchers
+        // Fetch custodian data and approved transactions
         const custodianData = await models.Custodian.findOne({
             where: { user_id: userId },
             include: [
                 {
                     model: models.Transactions,
-                    where: { status: 'approved' }, // Only include approved transactions
+                    where: {
+                        status: 'approved',
+                        ...(reportId ? { report_id: reportId } : {}) // Filter by report_id if provided
+                    },
                     include: [
-                        {
-                            model: models.Items,
-                            as: 'items'  // Include associated items
-                        },
-                        {
-                            model: models.Voucher,
-                            as: 'voucher'  // Include associated voucher
-                        },
-                        {
-                            model: models.Reports,
-                            as: 'report'  // Include related reports
-                        }
-                    ],
-                    order: [['createdAt', 'ASC']]
+                        { model: models.Items, as: 'items' }, // Include related items
+                        { model: models.Voucher, as: 'voucher' }, // Include related vouchers
+                        { model: models.Reports, as: 'report' } // Include related reports
+                    ]
                 }
-            ]
+            ],
+            order: [[models.Transactions, 'createdAt', 'ASC']] // Sort transactions by creation date
         });
 
+        // Handle case where custodian is not found
         if (!custodianData) {
             return res.status(404).send('Custodian not found.');
         }
 
+        // Extract transactions from the fetched custodian data
         const transactions = custodianData.Transactions || [];
-        const cashId = custodianData.cashF_id;
+        console.log("Transactions fetched:", JSON.stringify(transactions, null, 2)); // Debug: Log transactions
 
-        // Extract and handle the month with defensive checks
-        const month = transactions.length > 0 
-            ? (() => {
-                const startDate = transactions[0]?.startDate;
-
-                if (!startDate) return 'N/A';
-                const parts = startDate.split('/');
-
-                if (parts.length !== 3) return 'Invalid Date';
-
-                const monthNum = parseInt(parts[0], 10);
-                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                                    'July', 'August', 'September', 'October', 'November', 'December'];
-
-                return monthNames[monthNum - 1] || 'Unknown Month';
-            })()
-            : 'N/A';
-
-        const startAmount = transactions.length > 0 && transactions[0].report ? transactions[0].report.pettyCashStart : 0;
-
+        // Calculate grand total from all transactions
         let grandTotal = 0;
 
-        // Correctly calculate the report data
-        const reportData = transactions.map((tx) => {
+        const transactionDetails = transactions.map((tx) => {
             const transactionTotal = parseFloat(tx.total) || 0;
             grandTotal += transactionTotal;
 
-
-            // Safely retrieve item names with quantity
+            // Format item details
             const itemNames = Array.isArray(tx.items)
                 ? tx.items.map(item => `${item.itemName} (x${item.itemQuantity})`).join(', ')
                 : 'No items';
@@ -341,29 +362,63 @@ const generateReport = async (req, res) => {
                 items: itemNames,
                 total: transactionTotal,
                 voucherNo: tx.voucher ? tx.voucher.voucher_id : 'N/A',
-                description: tx.description,
+                description: tx.description
             };
         });
 
+        // Extract report data for the dropdown menu (if applicable)
+        const uniqueReports = [
+            ...new Map(
+                transactions
+                    .filter(tx => tx.report) // Ensure there's a linked report
+                    .map(tx => [tx.report.report_id, tx.report]) // Map to report_id as key
+            ).values()
+        ];
+
+        const reportData = uniqueReports.map(report => ({
+            report_id: report.report_id,
+            pettyCashStart: report.pettyCashStart
+        }));
+
+        // Calculate start amount (if transactions exist)
+        const startAmount = transactions.length > 0 && transactions[0].report
+            ? transactions[0].report.pettyCashStart
+            : 0;
+
+            const month = transactions.length > 0 && transactions[0].report && transactions[0].report.startDate
+            ? (() => {
+                const startDate = transactions[0].report.startDate; // Access the report's startDate
+                const date = new Date(startDate); // Parse the startDate into a Date object
+                if (isNaN(date)) return 'Invalid Date'; // Handle invalid dates
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+                return monthNames[date.getMonth()]; // Retrieve the month name
+            })()
+            : 'N/A';
+
+        // Render the report view with all required data
         res.render('custodian/report', {
-            reportData,
-            cashId,
+            reportData, // For the dropdown menu
+            cashId: custodianData.cashF_id, // Custodian cash ID
             custodian: {
                 custodian_name: custodianData.custodian_name,
                 custodian_no: custodianData.custodian_no
             },
-            reportNumber: `Report-${new Date().toISOString().split('T')[0]}`,
-            grandTotal,
-            startAmount,
-            month,
-            reportId,
+            reportNumber: `Report-${new Date().toISOString().split('T')[0]}`, // Dynamic report number
+            grandTotal, // Total of all transactions
+            startAmount, // Initial petty cash amount
+            month, // Extracted month for the report
+            reportId, // Current report ID
+            transactions: transactionDetails, // Transaction details for the table
+            custodianFullName: custo ? custo.custodian_name : "Custodian"
         });
 
     } catch (error) {
-        console.error('Error generating report:', error.message);
-        res.status(500).send('Server error. Please try again later.');
+        console.error('Error generating report:', error.message); // Debug: Log the error
+        res.status(500).send('Server error. Please try again later.'); // Return a server error response
     }
 };
+
 
 
 

@@ -41,9 +41,7 @@
             <div class="title">
                 <span>Petty Cash System</span>
             </div>
-            <div class="admin">
-                <span>Hello, Custodian!</span>
-            </div>
+            <div class="admin">Hello, <%= custodianFullName %>!</div>
         </div>
 
         <div class="transaction-container">
@@ -54,17 +52,22 @@
                         <h2>Report on Paid Petty Cash Vouchers</h2>
                     </div>
                 </div>
-                <div class="filters">
-                    <h2>Report Navigation</h2>
-                    <nav>
+                <div>
+                    <h3>Report ID:</h3>
+                    <select id="reportSpinner" class="filters" onchange="location.href=this.value">
+                        <option value="" disabled selected>Select a report</option>
                         <% if (reportData && reportData.length > 0) { %>
                             <% reportData.forEach((report) => { %>
-                                <a href="?report_id=<%= report.report_id %>">Report ID <%= report.report_id %></a>
+                                <option value="?report_id=<%= report.report_id %>" <%= reportId == report.report_id ? 'selected' : '' %>>
+                                    Report ID <%= report.report_id %>
+                                </option>
                             <% }); %>
                         <% } else { %>
-                            <p>No reports available.</p>
+                            <option value="" disabled>No reports available</option>
                         <% } %>
-                    </nav>
+                    </select>
+                    
+                    
                 </div>
                 <div class="transaction-form">
                     <h2>Report Details for ID: <%= reportId %></h2>
@@ -75,34 +78,43 @@
                 </div>
             
                 <div class="items-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Petty Cash Voucher No.</th>
-                                <th>Items</th>
-                                <th>Total Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (reportData && reportData.length > 0) { %>
-                                <% reportData.forEach(report => { %>
-                                    <tr>
-                                        <td><%= new Date(report.date).toLocaleDateString() %></td>
-                                        <td><%= report.voucherNo %></td>
-                                        <td><%= report.items %></td>
-                                        <td><%= report.total %></td>
-                                    </tr>
-                                <% }); %>
-                            <% } else { %>
+                    <% if (transactions.length > 0) { %>
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td colspan="6">No report data available.</td>
+                                    <th>Date</th>
+                                    <th>Store Name</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Voucher No</th>
+                                    <th>Description</th>
                                 </tr>
-                            <% } %>
-                        </tbody>
-                        
-                        
-                    </table>
+                            </thead>
+                            <tbody>
+                                <% transactions.forEach(tx => { %>
+                                    <tr>
+                                        <td>
+                                            <%= (() => {
+                                              const date = new Date(tx.date);
+                                              const day = String(date.getDate()).padStart(2, '0');
+                                              const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                                              const year = date.getFullYear();
+                                              return `${day}/${month}/${year}`;
+                                            })() %>
+                                          </td>
+                                        <td><%= tx.storeName %></td>
+                                        <td><%= tx.items %></td>
+                                        <td><%= tx.total %></td>
+                                        <td><%= tx.voucherNo %></td>
+                                        <td><%= tx.description %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    <% } else { %>
+                        <p>No transactions found.</p>
+                    <% } %>
+                    
 
                     <div class="transaction-form1">
                         <p class="grandTotal"><strong>Grand Total: ₱<%= grandTotal.toFixed(2) %></strong></p>

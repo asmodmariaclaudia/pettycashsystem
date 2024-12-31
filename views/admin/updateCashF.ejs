@@ -60,7 +60,7 @@
             <!-- <h2>Update Fund</h2> -->
             <form action="/update-cashfund" method="post">
                 <div class="form-group">
-                    <label for="custodian">Custodian:</label>
+                    <label for="custodian">Custodian No.:</label>
                     <select id="custodian" name="custodian">
                         <% custodians.forEach(custodian => { %>
                             <option value="<%= custodian.custodian_no %>"><%= custodian.custodian_no %></option>

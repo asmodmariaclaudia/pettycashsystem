@@ -40,9 +40,7 @@
             <div class="title">
                 <span>Petty Cash System</span>
             </div>
-            <div class="admin">
-                <span>Custodian</span>
-            </div>
+            <div class="admin">Hello, <%= custodianFullName %>!</div>
         </div>
 
         <div class="add-transaction-container">
@@ -90,6 +88,7 @@
                                         <th>Amount</th>
                                         <th>Quantity</th>
                                         <th>Total</th>
+                                        <th>Remove</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -105,6 +104,7 @@
                             <input type="number" id="itemAmount" placeholder="P0.00" step="0.01">
                             <input type="number" id="itemQuantity" placeholder="Quantity" min="1">
                             <button id="addItemButton">Add Item</button>
+
                         </div>
                         
                         <div class="action-buttons">
@@ -112,6 +112,10 @@
                             <button id="cancelTransactionButton" type="button">Cancel</button>
                         </div>
                     </form>
+
+                    <div id="toaster" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #f44336; color: white; padding: 10px; border-radius: 5px;">
+                        <span id="toaster-message"></span>
+                    </div>
 
                     <div class="transaction-form">
                         <form action="/updateTransaction" method="post" style="display: none;">
@@ -154,6 +158,22 @@
                 window.location.href = 'dashboardCustodian'; // Update the path if necessary
             });
         </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const toaster = document.getElementById('toaster');
+                const toasterMessage = document.getElementById('toaster-message');
+                const errorMessage = "<%= typeof error !== 'undefined' ? error : '' %>";
+
+                if (errorMessage) {
+                    toasterMessage.textContent = errorMessage;
+                    toaster.style.display = 'block';
+                    setTimeout(() => {
+                        toaster.style.display = 'none';
+                    }, 5000); // Hide after 5 seconds
+                }
+            });
+        </script>
         
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -168,6 +188,15 @@
                 function updateTotal() {
                     totalCell.textContent = `Total: ₱${total.toFixed(2)}`;
                     totalInput.value = total.toFixed(2); // Update the input field
+                }
+
+                // Remove an item from the table
+                function removeItem(event) {
+                    const row = event.target.closest('tr'); // Find the closest table row
+                    const rowTotal = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace('₱', '')); // Get the total of the row
+                    total -= rowTotal; // Subtract the row total from the overall total
+                    updateTotal();
+                    row.remove(); // Remove the row
                 }
 
                 // Add item to the table
@@ -191,12 +220,17 @@
                         <td>₱${itemAmount.toFixed(2)}</td>
                         <td>${itemQuantity}</td>
                         <td>₱${rowTotal.toFixed(2)}</td>
+                        <td>
+                            <button class="remove-item-button">X</button>
+                        </td>
                         <td style="display:none;">
                             <input type="hidden" name="items[${itemCount}][itemName]" value="${itemName}">
                             <input type="hidden" name="items[${itemCount}][itemAmount]" value="${itemAmount}">
                             <input type="hidden" name="items[${itemCount}][itemQuantity]" value="${itemQuantity}">
                         </td>
                     `;
+
+                    newRow.querySelector('.remove-item-button').addEventListener('click', removeItem);
 
                     itemsTableBody.insertBefore(newRow, itemsTableBody.querySelector('.total-row'));
                     total += rowTotal;

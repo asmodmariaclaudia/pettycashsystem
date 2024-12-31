@@ -306,12 +306,20 @@ body {
 }
 
 .search_topdash{
-    margin: 2%;
+    margin: 1%;
 }
 
 .searchbar input{
-    padding: 0%;
-    width: 90%;
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    padding: 5px 20px;
+    padding-left: 45px;
+    font-size: 16px;
+    outline: none;
+    background-color: #fff;
+
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .searchbar{
@@ -383,3 +391,4 @@ body {
 .notification i {
     font-size: 18px;
 }
+

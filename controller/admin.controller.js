@@ -41,14 +41,41 @@ const add_custodian = async (req, res) => {
     };
 
     try {
+        // Check for duplicate username
+        const existingUser = await models.User.findOne({
+            where: { username: custodian_data.username },
+        });
+        if (existingUser) {
+            console.log('Duplicate username found');
+            return res.redirect("/addCustodian?message=Username already exists&type=error");
+        }
+
+        // Check for duplicate custodian_no
+        const existingCustodianNo = await models.Custodian.findOne({
+            where: { custodian_no: custodian_data.custodian_no },
+        });
+        if (existingCustodianNo) {
+            console.log('Duplicate custodian number found');
+            return res.redirect("/addCustodian?message=Custodian number already exists&type=error");
+        }
+
+        // Check for duplicate custodian_name
+        const existingCustodianName = await models.Custodian.findOne({
+            where: { custodian_name: custodian_data.custodian_name },
+        });
+        if (existingCustodianName) {
+            console.log('Duplicate custodian name found');
+            return res.redirect("/addCustodian?message=Custodian name already exists&type=error");
+        }
+
         await sequelize.transaction(async (transaction) => {
-            // Create the user creds
+            // Create the user credentials
             const user = await models.User.create(
                 {
                     username: custodian_data.username,
                     password: custodian_data.password,
                     userType: custodian_data.userType
-                }, 
+                },
                 { transaction }
             );
 
@@ -69,12 +96,11 @@ const add_custodian = async (req, res) => {
                     custodian_name: custodian_data.custodian_name,
                     status: 'active',
                     cashF_id: cashFund.cashF_id // Link to the CashFund
-                }, 
+                },
                 { transaction }
             );
 
-
-            res.redirect("/addCustodian?message=Custodian created&type=success");
+            res.redirect("/addCustodian?message=Custodian created successfully&type=success");
         });
     } catch (error) {
         console.error("Transaction Error:", error);
@@ -139,14 +165,22 @@ const updateCashFund = async (req, res) => {
             return res.redirect("/updateCashF?message=Cannot update. Fund amount must be zero.&type=error");
         }
 
-        cashFund.amount = parseFloat(newfund_data);
-        await cashFund.save();
+        const newFundAmount = parseFloat(newfund_data);
 
+        // Check if the new fund amount exceeds ₱15,000
+        if (newFundAmount > 15000) {
+            console.log('New fund amount exceeds ₱15,000');
+            return res.redirect("/updateCashF?message=Cannot update. Fund amount cannot exceed ₱15,000.&type=error");
+        }
+
+        // Update the cash fund
+        cashFund.amount = newFundAmount;
+        await cashFund.save();
 
         // Create a new report
         await models.Reports.create({
             startDate: new Date(), // Set the current date as the report start date
-            pettyCashStart: newfund_data, // The new fund amount
+            pettyCashStart: newFundAmount, // The new fund amount
             totalAmount: 0.00, // Initial total amount is 0
             custodian_id: custodianRecord.user_id, // Link to the custodian
         });
@@ -158,6 +192,7 @@ const updateCashFund = async (req, res) => {
         res.redirect("/updateCashF?message=An error occurred while updating the cash fund.&type=error");
     }
 };
+
 
 
 
@@ -227,11 +262,11 @@ const update_admin = async (req, res) => {
             }
 
             // Commit the transaction if successful
-            res.json({ message: 'Admin details updated successfully!' });
+            res.redirect(`/dashboardAdmin?message=Admin details updated successfully!&type=success`);
         });
     } catch (err) {
         console.error("Transaction Error:", err);
-        res.status(500).json({ message: 'Error while updating admin details.', error: err.message });
+        res.redirect(`/dashboardAdmin?message=Error while updating admin details.&type=error`);
     }
 };
 

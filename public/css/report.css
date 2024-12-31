@@ -453,6 +453,10 @@ p {
     text-align: center;
 }
 
+.filters{
+    max-width: 20%;
+}
+
 
 
 

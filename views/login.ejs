@@ -108,67 +108,75 @@
             const tabBodies = document.querySelectorAll(".tab-content .tab-body");
             const signUpTab = document.getElementById("signUpTab");
             const signUpForm = tabBodies[1];
-
             const modal = document.getElementById("passkeyModal");
             const passkeyInput = document.getElementById("passkeyInput");
             const validatePasskeyButton = document.getElementById("validatePasskey");
             const cancelModalButton = document.getElementById("cancelModal");
 
-            const validPasskey = "adminPass"; // Replace with your secure passkey
+            let isPasskeyValidated = false; // State to track passkey validation
 
-            // Prevent access to sign-up form initially
+            // Ensure the Sign-Up form is hidden initially
             signUpForm.style.display = "none";
 
-            // Handle Sign-Up tab click
-            signUpTab.addEventListener("click", function () {
-                modal.style.display = "block";
-            });
-
-            // Validate Passkey
-            validatePasskeyButton.addEventListener("click", function () {
-                if (passkeyInput.value === validPasskey) {
-                    modal.style.display = "none";
-                    signUpForm.style.display = "block";
-                    signUpTab.classList.add("active");
-                    tabBodies[0].classList.remove("active");
-                } else {
-                    alert("Incorrect Passkey! Access denied.");
-                    passkeyInput.value = "";
-                }
-            });
-
-            // Cancel Modal
-            cancelModalButton.addEventListener("click", function () {
-                modal.style.display = "none";
-                passkeyInput.value = "";
-            });
-
-            // Close modal if user clicks outside it
-            window.addEventListener("click", function (event) {
-                if (event.target === modal) {
-                    modal.style.display = "none";
-                }
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let tabPanes = document.querySelectorAll(".tab-header > div");
-            let tabBodies = document.querySelectorAll(".tab-content .tab-body");
-    
+            // Handle tab switching
             tabPanes.forEach((tab, index) => {
                 tab.addEventListener("click", function () {
-                    // Remove the 'active' class from the currently active tab and body
+                    // If switching to Sign-Up tab and passkey not validated
+                    if (index === 1 && !isPasskeyValidated) {
+                        modal.style.display = "block"; // Show modal for passkey
+                        return; // Prevent switching to Sign-Up tab without validation
+                    }
+
+                    // Reset Sign-Up form visibility and passkey validation when switching back to Log In
+                    if (index === 0) {
+                        signUpForm.style.display = "none"; // Hide Sign-Up form
+                        isPasskeyValidated = false; // Reset passkey validation state
+                    }
+
+                    // Remove 'active' class from all tabs and bodies
                     document.querySelector(".tab-header .active").classList.remove("active");
                     document.querySelector(".tab-content .tab-body.active").classList.remove("active");
-    
-                    // Add the 'active' class to the clicked tab and corresponding content
+
+                    // Add 'active' class to clicked tab and corresponding content
                     tab.classList.add("active");
                     tabBodies[index].classList.add("active");
                 });
             });
+
+            // Validate Passkey for Sign-Up access
+            validatePasskeyButton.addEventListener("click", function () {
+                const validPasskey = "adminPass"; // Replace with your secure passkey
+                if (passkeyInput.value === validPasskey) {
+                    isPasskeyValidated = true; // Update state
+                    modal.style.display = "none"; // Hide modal
+                    signUpForm.style.display = "block"; // Allow access to Sign-Up
+                    tabBodies[0].classList.remove("active"); // Deactivate Login tab
+                    tabBodies[1].classList.add("active"); // Activate Sign-Up tab
+                    tabPanes[1].classList.add("active"); // Highlight Sign-Up tab
+                } else {
+                    alert("Incorrect Passkey! Access denied.");
+                    passkeyInput.value = ""; // Clear passkey input
+                }
+            });
+
+            // Cancel modal action
+            cancelModalButton.addEventListener("click", function () {
+                modal.style.display = "none"; // Hide modal
+                passkeyInput.value = ""; // Clear input
+            });
+
+            // Close modal if user clicks outside of it
+            window.addEventListener("click", function (event) {
+                if (event.target === modal) {
+                    modal.style.display = "none"; // Hide modal
+                }
+            });
         });
+
+
+
     </script>
+    
+
 </body>
 </html>

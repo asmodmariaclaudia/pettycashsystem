@@ -40,7 +40,7 @@
         <div class="topbar">
             <div class="toggle"><i class="fas fa-bars"></i></div>
             <div class="title">Custodian Dashboard</div>
-            <div class="admin">Hello, Custodian!</div>
+            <div class="admin">Hello, <%= custodianFullName %>!</div>
         </div>
 
         <!-- Dashboard Content -->
@@ -62,12 +62,12 @@
 
 
             <div class="search_topdash">
-                <!-- <h2>Transaction</h2> -->
                 <div class="searchbar">
-                    <input type="search" placeholder="Search here...">
+                    <input id="searchInput" class="inSearch" type="search" placeholder="Search here..." onkeyup="searchTable()">
                     <i class="fa fa-search"></i>
                 </div>
             </div>
+            
 
             <!-- Transaction Table -->
             <div class="table-container">
@@ -125,16 +125,74 @@
     </script>
 
     <script>
+        // Search Table Functionality
+        function searchTable() {
+            // Get the input value and convert it to lowercase
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+
+            // Get all rows in the table body
+            const rows = document.querySelectorAll('.custodian-table tbody tr');
+
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+
+                let rowText = '';
+                // Loop through each cell in a row and combine text content
+                for (let i = 0; i < cells.length; i++) {
+                    rowText += cells[i].textContent.toLowerCase() + ' ';
+                }
+
+                // Check if the search input matches any text in the row
+                if (rowText.includes(filter)) {
+                    row.style.display = ''; // Show the row if it matches
+                } else {
+                    row.style.display = 'none'; // Hide the row if it doesn't match
+                }
+            });
+}
+
+    </script>
+
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const rows = document.querySelectorAll('.clickable-row');
-    
+
             rows.forEach(row => {
-                row.addEventListener('click', function () {
-                    const transactionId = this.dataset.id; // Get the transaction ID from data-id
-                    window.location.href = `/updateTrans?transactionId=${transactionId}`; // Redirect with query parameter
+                row.addEventListener('click', function (event) {
+                    const transactionId = this.dataset.id;
+
+                    // Get transaction details from the row cells
+                    const cells = this.getElementsByTagName('td');
+                    const description = cells[2].innerText.trim();
+                    const total = cells[3].innerText.trim();
+                    const purchaser = cells[4].innerText.trim();
+                    const employeeId = cells[5].innerText.trim();
+                    const oRNo = cells[7].innerText.trim();
+                    const storeName = cells[8].innerText.trim();
+                    const personalContri = cells[9].innerText.trim();
+
+                    // Check if all required fields are filled
+                    const allFieldsFilled = description && total && purchaser && employeeId && oRNo && storeName && personalContri;
+
+                    if (allFieldsFilled) {
+                        // Prevent clicking on the row if all fields are filled
+                        event.stopPropagation();
+                        alert('Updating is disabled as all fields are already filled.');
+                    } else {
+                        window.location.href = `/updateTrans?transactionId=${transactionId}`;
+                    }
                 });
             });
-    
+
+            // Ensure "Create Voucher" links remain clickable
+            const voucherButtons = document.querySelectorAll('.vouch a');
+            voucherButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Ensures clicking the link doesn't trigger row click
+                });
+            });
+
             // Style and disable unapproved rows
             const disabledRows = document.querySelectorAll('.disabled-row');
             disabledRows.forEach(row => {
@@ -142,6 +200,7 @@
                 row.style.opacity = '0.5';
             });
         });
+
     </script>
     
     

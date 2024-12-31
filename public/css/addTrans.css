@@ -423,3 +423,59 @@ body {
     display: block;
     margin-bottom: 5px;
 }
+
+.toaster {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    animation: fadeInOut 5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+
+/* General styling for the Remove button */
+.remove-item-button {
+    background-color: #f44336; /* Red background */
+    color: white; /* White text */
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 14px; /* Font size */
+    font-weight: bold; /* Bold text */
+    padding: 4px 8px; /* Padding around the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+/* Hover effect for the Remove button */
+.remove-item-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Focus state for accessibility */
+.remove-item-button:focus {
+    outline: 2px solid #ff7961; /* Highlight when focused */
+}
+
+/* Optional: Make the button circular */
+.remove-item-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
